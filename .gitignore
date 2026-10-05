@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+npm-debug.log*
+baileys_auth/
+.auth/
+sessions/
+.DS_Store
+coverage/
+*.tsbuildinfo
+
+# dashboard build & backups
+dashboard/.next/
+dashboard/.backups/
+*.bak
+
+# design tooling
+.impeccable/
+
