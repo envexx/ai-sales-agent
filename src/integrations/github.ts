@@ -193,9 +193,9 @@ export async function gitCurrentBranch(repoDir: string): Promise<string> {
   return git(["-C", repoDir, "rev-parse", "--abbrev-ref", "HEAD"]);
 }
 
-/** Daftar file yang berubah (termasuk untracked), path relatif. */
+/** Daftar file yang berubah (termasuk untracked), path relatif. Submodule diabaikan. */
 export async function gitChangedFiles(repoDir: string): Promise<string[]> {
-  const out = await git(["-C", repoDir, "status", "--porcelain"]);
+  const out = await git(["-C", repoDir, "status", "--porcelain", "--ignore-submodules=all"]);
   const files = out
     .split(/\r?\n/)
     .map((line) => line.trim())
