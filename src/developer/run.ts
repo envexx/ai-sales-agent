@@ -22,6 +22,7 @@ import {
   gitRevertAll,
 } from "../integrations/github.js";
 import { opencodeRun } from "../integrations/opencode.js";
+import { opencodeServerRun } from "../integrations/opencodeServer.js";
 import { notifyOwner } from "../notifications/index.js";
 import { requestApproval } from "../pipeline/approvals.js";
 import { updateProject } from "../pipeline/entities.js";
@@ -475,7 +476,11 @@ async function runInternalApply(
   const planText = await readPlanText(target, payload.planPath);
   let run;
   try {
-    run = await opencodeRun({ prompt: internalApplyPrompt(target, planText), cwd: repoDir, auto: true });
+    const prompt = internalApplyPrompt(target, planText);
+    run =
+      env.DEVELOPER_OPENCODE_MODE === "cli"
+        ? await opencodeRun({ prompt, cwd: repoDir, auto: true })
+        : await opencodeServerRun({ prompt, cwd: repoDir, auto: true });
   } catch (err) {
     await gitRevertAll(repoDir);
     await emitEvent("developer.failed", {

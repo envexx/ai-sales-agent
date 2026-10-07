@@ -284,6 +284,12 @@ const EnvSchema = z.object({
   DEVELOPER_OPENCODE_TIMEOUT_MS: int(600000),
   // Jalankan `opencode run --standalone` (server privat) agar proses exit rapi.
   DEVELOPER_OPENCODE_STANDALONE: bool(true),
+  // Engine: "server" (HTTP API v2 · default) atau "cli" (spawn `opencode run`).
+  DEVELOPER_OPENCODE_MODE: z.enum(["server", "cli"]).default("server"),
+  // URL server OpenCode (kosong = auto dari `opencode service status`).
+  DEVELOPER_OPENCODE_SERVER_URL: z.string().default(""),
+  // Path service.json (kosong = ~/.config/opencode/service.json).
+  DEVELOPER_OPENCODE_SERVER_JSON: z.string().default(""),
   DEVELOPER_SWEEP_ENABLED: bool(true),
   DEVELOPER_SWEEP_HOUR: int(11),
   DEVELOPER_MAX_PLAN_ITEMS: int(12),
