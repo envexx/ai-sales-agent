@@ -548,9 +548,10 @@ async function runInternalApply(
   const branch = `agent/developer-${target.id.slice(0, 8)}-${Date.now().toString(36)}`;
   let merged = false;
   let sha = "";
+  let diff = "";
   try {
     await gitCreateBranch(repoDir, branch);
-    const diff = await gitDiffStat(repoDir).catch(() => "");
+    diff = await gitDiffStat(repoDir).catch(() => "");
     sha = await gitCommitAll(repoDir, `feat(developer-internal): ${target.name}`);
     await ghSetupGit();
     await gitPush(repoDir, branch, 20_000).catch((err) => log.warn({ err: (err as Error).message }, "push branch internal gagal"));
