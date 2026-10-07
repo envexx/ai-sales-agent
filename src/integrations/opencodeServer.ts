@@ -100,6 +100,7 @@ export interface OpencodeServerRunResult {
   model: string;
 }
 
+// Dipakai agent Developer untuk menjalankan tugas via HTTP API server (mode server).
 export async function opencodeServerRun(args: {
   prompt: string;
   cwd?: string;
