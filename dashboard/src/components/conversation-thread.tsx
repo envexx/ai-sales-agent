@@ -17,14 +17,12 @@ function dayLabel(iso: string): string {
  * distinguishable at a glance while scanning.
  */
 export function ConversationThread({ messages }: { messages: ConversationMessage[] }) {
-  let lastDay = "";
 
   return (
     <div className="flex flex-col gap-3">
       {messages.map((m, i) => {
         const day = dayLabel(m.createdAt);
-        const showDay = day !== lastDay;
-        lastDay = day;
+        const showDay = i === 0 || day !== dayLabel(messages[i - 1].createdAt);
         const outbound = m.direction === "outbound";
 
         return (
@@ -39,7 +37,7 @@ export function ConversationThread({ messages }: { messages: ConversationMessage
 
             <div
               className={cn(
-                "flex max-w-[85%] gap-2.5",
+                "flex min-w-0 max-w-[95%] gap-2.5 sm:max-w-[85%]",
                 outbound ? "ml-auto flex-row-reverse" : "mr-auto",
               )}
             >
@@ -54,7 +52,7 @@ export function ConversationThread({ messages }: { messages: ConversationMessage
               </span>
               <div
                 className={cn(
-                  "rounded-lg border px-3.5 py-2.5",
+                  "min-w-0 rounded-lg border px-3.5 py-2.5",
                   outbound
                     ? "border-emerald-500/20 bg-emerald-500/5"
                     : "bg-muted/50",
@@ -66,7 +64,7 @@ export function ConversationThread({ messages }: { messages: ConversationMessage
                     {formatClock(m.createdAt)}
                   </span>
                 </p>
-                <p className="mt-1 text-sm leading-relaxed whitespace-pre-wrap">
+                <p className="mt-2 text-sm leading-6 whitespace-pre-wrap [overflow-wrap:anywhere]">
                   {m.content}
                 </p>
               </div>

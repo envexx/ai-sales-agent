@@ -5,7 +5,8 @@ process.env.DRY_RUN = process.env.DRY_RUN ?? "true";
 const { ensureSchema } = await import("../db/schema.js");
 const { closePool } = await import("../db/pool.js");
 const { getGraph } = await import("../graph/index.js");
-const { handleInboundTurn } = await import("../graph/run.js");
+const { getSupervisorGraph } = await import("../supervisor/index.js");
+const { handleSupervisorTurn } = await import("../supervisor/run.js");
 const { logger } = await import("../config/logger.js");
 
 const WA_JID = "6281234567890@s.whatsapp.net";
@@ -30,13 +31,14 @@ const SCRIPT: Array<{ name: string; text: string }> = [
 ];
 
 async function main(): Promise<void> {
-  logger.info("▶️  simulation started (transport=console, dryRun=true)");
+  logger.info("▶️  simulation started (supervisor → sales, transport=console, dryRun=true)");
   await ensureSchema();
   await getGraph();
+  getSupervisorGraph();
 
   for (const step of SCRIPT) {
     logger.info({ step: step.name }, `— inbound: ${step.text}`);
-    const result = await handleInboundTurn({
+    const result = await handleSupervisorTurn({
       threadId: THREAD_ID,
       leadId: null,
       waJid: WA_JID,
@@ -45,26 +47,27 @@ async function main(): Promise<void> {
       receivedAt: new Date().toISOString(),
     });
 
-    // Surface a readable summary of what the graph decided.
+    const meta = (result.agentResult?.metadata ?? {}) as Record<string, unknown>;
+    const evaluation = meta.evaluation as { overall?: number } | null;
+    const booking = meta.booking as { status?: string } | null;
+
+    // Surface a readable summary of what the supervisor + agent decided.
     // eslint-disable-next-line no-console
     console.log(
       JSON.stringify(
         {
           step: step.name,
-          isBot: result.isBot,
+          agent: result.activeAgent,
+          route: result.routeReason,
+          isBot: meta.isBot,
           filtered: result.filtered,
-          intent: result.triage?.intent ?? null,
-          leadScore: result.leadScore,
-          segment: result.segment,
-          rag: {
-            knowledge: result.retrievedContext.filter((d) => d.source === "knowledge")
-              .length,
-            memory: result.retrievedContext.filter((d) => d.source === "memory")
-              .length,
-          },
-          reply: result.finalResponse,
-          evaluation: result.evaluation?.overall ?? null,
-          booking: result.booking?.status ?? null,
+          intent: meta.intent,
+          leadScore: meta.leadScore,
+          segment: meta.segment,
+          rag: meta.rag,
+          reply: result.reply,
+          evaluation: evaluation?.overall ?? null,
+          booking: booking?.status ?? null,
           errors: result.errors,
         },
         null,

@@ -1,0 +1,32 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Pilih workspace" [ref=e5]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: Workspace
+          - generic [ref=e13]: AI Automation
+      - navigation [ref=e16]:
+        - paragraph [ref=e17]: Utama
+        - link "Ringkasan" [ref=e18] [cursor=pointer]:
+          - /url: /
+        - link "Alur Operasional" [ref=e24] [cursor=pointer]:
+          - /url: /operasional
+        - link "Approval" [ref=e30] [cursor=pointer]:
+          - /url: /approvals
+        - link "Tiket" [ref=e35] [cursor=pointer]:
+          - /url: /tickets
+        - button "Agent 0" [expanded] [ref=e41]:
+          - generic [ref=e42]: Agent
+          - generic [ref=e43]: "0"
+        - button "Data & Operasi" [ref=e46]
+        - link "Pengaturan" [ref=e51] [cursor=pointer]:
+          - /url: /pengaturan
+      - generic [ref=e55]: Menghubungkan…
+    - main [ref=e59]:
+      - generic [ref=e61]:
+        - heading "Agent" [level=1] [ref=e63]
+        - button "Aktifkan tema gelap" [ref=e65]
+      - generic [ref=e73]:
+        - paragraph [ref=e74]: Memuat agent…
+        - paragraph [ref=e75]: Pilih agent dari menu di samping.
+  - button "Open Next.js Dev Tools" [ref=e81] [cursor=pointer]

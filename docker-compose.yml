@@ -19,5 +19,23 @@ services:
       timeout: 5s
       retries: 10
 
+  # Port-forwarder ke SearXNG milik stack Firecrawl (network eksternal).
+  # Dipakai Research Agent untuk discovery URL yang andal. Ini TIDAK mengubah
+  # compose Firecrawl — hanya menempel ke network-nya dan meneruskan port 8081.
+  searxng-proxy:
+    image: alpine/socat
+    container_name: sales-searxng-proxy
+    restart: unless-stopped
+    command: tcp-listen:8080,fork,reuseaddr tcp:firecrawl-searxng-1:8080
+    ports:
+      - "8081:8080"
+    networks:
+      - firecrawl_backend
+
 volumes:
   sales_pgdata:
+
+networks:
+  # Dibuat oleh stack Firecrawl milik sistem lain; kita hanya memakainya.
+  firecrawl_backend:
+    external: true

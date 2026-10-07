@@ -1,0 +1,86 @@
+- main [ref=f191e2]:
+  - main [ref=f191e3]:
+    - status "Connecting to runtime":
+      - generic:
+        - generic:
+          - paragraph: Connecting to your runtime...
+    - complementary:
+      - generic [ref=f191e4]:
+        - button "Collapse building directory" [expanded] [ref=f191e5] [cursor=pointer]:
+          - generic [ref=f191e6]: Building Directory
+        - generic [ref=f191e9]:
+          - generic [ref=f191e10]:
+            - button "Switch to previous enabled floor" [ref=f191e11] [cursor=pointer]: Prev
+            - button "Switch to next enabled floor" [ref=f191e12] [cursor=pointer]: Next
+          - generic [ref=f191e13]:
+            - generic [ref=f191e14]: Building
+            - button "Select Lobby" [pressed] [ref=f191e15] [cursor=pointer]:
+              - generic [ref=f191e16]:
+                - generic [ref=f191e17]:
+                  - generic [ref=f191e18]: Floor
+                  - generic [ref=f191e19]: Lobby
+                - generic [ref=f191e20]: Demo
+              - generic [ref=f191e21]:
+                - generic [ref=f191e22]: Lobby
+                - generic [ref=f191e23]: roster 0 | idle
+            - button "Select OpenClaw Floor" [ref=f191e24] [cursor=pointer]:
+              - generic [ref=f191e25]:
+                - generic [ref=f191e26]:
+                  - generic [ref=f191e27]: Floor
+                  - generic [ref=f191e28]: OpenClaw Floor
+                - generic [ref=f191e29]: OpenClaw
+              - generic [ref=f191e30]:
+                - generic [ref=f191e31]: OpenClaw
+                - generic [ref=f191e32]: roster 0 | idle
+      - generic [ref=f191e33]:
+        - generic [ref=f191e34]: Current Floor
+        - generic [ref=f191e35]: Lobby
+        - generic [ref=f191e36]:
+          - generic [ref=f191e37]: Demo
+          - generic [ref=f191e38]: roster 0 | idle
+    - generic [ref=f191e40]:
+      - generic [ref=f191e45]:
+        - generic [ref=f191e46]:
+          - button "Overview" [ref=f191e47] [cursor=pointer]
+          - button "Front desk" [ref=f191e53] [cursor=pointer]
+          - button "Lounge" [ref=f191e56] [cursor=pointer]
+        - button "Kanban board" [ref=f191e60] [cursor=pointer]
+      - generic: Luke Headquarters
+      - button "0 agents" [ref=f191e64] [cursor=pointer]:
+        - generic [ref=f191e70]: "0"
+        - generic [ref=f191e71]: agents
+      - generic [ref=f191e72]:
+        - button "Add" [ref=f191e73] [cursor=pointer]
+        - 'generic "Runtime: openclaw (disconnected)" [ref=f191e78]': openclaw • disconnected
+        - button "Toggle heatmap" [ref=f191e79] [cursor=pointer]
+        - button "Toggle trails" [ref=f191e82] [cursor=pointer]
+        - button "Edit office" [ref=f191e88] [cursor=pointer]
+        - button "Voice reply settings" [ref=f191e92] [cursor=pointer]
+      - generic:
+        - generic:
+          - generic: 0 working
+          - generic: ·
+          - generic: 0 idle
+          - generic: ·
+          - generic: 0 error
+          - generic: ·
+          - generic: quiet
+          - generic: ·
+          - generic: drag · scroll · space+drag · dbl-click
+    - complementary:
+      - generic [ref=f191e96]:
+        - button "Open headquarters sidebar" [ref=f191e97] [cursor=pointer]:
+          - generic [ref=f191e98]: OPEN HQ
+        - button "Open marketplace" [ref=f191e99] [cursor=pointer]:
+          - generic [ref=f191e100]: MARKETPLACE
+        - button "Open analytics sidebar" [ref=f191e101] [cursor=pointer]:
+          - generic [ref=f191e102]: ANALYTICS
+    - generic [ref=f191e104]:
+      - generic [ref=f191e105]: Agent Event Console
+      - generic [ref=f191e106]:
+        - generic [ref=f191e107]: agents 0 | events 0/0
+        - button "Copy JSON" [ref=f191e108] [cursor=pointer]
+        - button "Download JSON" [ref=f191e109] [cursor=pointer]
+        - button "Clear" [ref=f191e110] [cursor=pointer]
+        - button "Expand" [ref=f191e111] [cursor=pointer]
+    - button "CHAT" [ref=f191e113] [cursor=pointer]

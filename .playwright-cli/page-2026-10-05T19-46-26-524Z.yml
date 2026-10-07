@@ -1,0 +1,35 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - complementary [ref=f1e3]:
+      - button "Pilih workspace" [ref=f1e5]:
+        - generic [ref=f1e11]:
+          - generic [ref=f1e12]: Workspace
+          - generic [ref=f1e13]: AI Automation
+      - navigation [ref=f1e16]:
+        - paragraph [ref=f1e17]: Utama
+        - link "Ringkasan" [ref=f1e18] [cursor=pointer]:
+          - /url: /
+        - link "Alur Operasional" [ref=f1e24] [cursor=pointer]:
+          - /url: /operasional
+        - link "Approval" [ref=f1e30] [cursor=pointer]:
+          - /url: /approvals
+        - link "Tiket" [ref=f1e35] [cursor=pointer]:
+          - /url: /tickets
+        - button "Agent 0" [ref=f1e41]:
+          - generic [ref=f1e42]: Agent
+          - generic [ref=f1e43]: "0"
+        - button "Data & Operasi" [ref=f1e46]
+        - link "Pengaturan" [ref=f1e51] [cursor=pointer]:
+          - /url: /pengaturan
+      - generic [ref=f1e55]: Menghubungkan…
+    - main [ref=f1e59]:
+      - generic [ref=f1e61]:
+        - generic [ref=f1e62]:
+          - heading "Alur Operasional" [level=1] [ref=f1e63]
+          - paragraph [ref=f1e64]: Pantau handoff lintas divisi dari akuisisi, deal desk, delivery, hingga layanan klien—tanpa kehilangan konteks penting.
+        - generic [ref=f1e65]:
+          - link "Workflow Sales" [ref=f1e66] [cursor=pointer]:
+            - /url: /workflow
+          - button "Aktifkan tema gelap" [ref=f1e67]
+      - paragraph [ref=f1e76]: Memuat alur operasional…
+  - alert [ref=f1e77]

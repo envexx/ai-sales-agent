@@ -1,0 +1,62 @@
+async page => {
+  const at = '2026-10-06T05:00:00.000Z';
+  const projects = [{id:'project-a',title:'Automasi Klinik Aurora',stage:'done_review'}, {id:'project-b',title:'CRM Toko Bumi',stage:'scoping'}, {id:'project-c',title:'Sistem Booking Atlas',stage:'delivered'}].map(p=>({...p,createdAt:at,updatedAt:at,clientId:null,workspace:null,prdPath:null,meta:{}}));
+  await page.route('http://localhost:4000/projects**', async route => {
+    const url = new URL(route.request().url());
+    if(url.pathname === '/projects') return route.fulfill({json:{projects}});
+    const id = url.pathname.split('/')[2];
+    const p = projects.find(p=>p.id===id);
+    if(!p) return route.fulfill({status:404,json:{error:'missing'}});
+    const name = id==='project-a'?'Aurora':'Bumi';
+    const file = {path:'PRD.md',name:'PRD.md',group:'prd',bytes:150,updatedAt:at};
+    if(url.pathname.endsWith('/documents')) return route.fulfill({json:{...file,content:'# '+name+'\n\nKonteks khusus '+name+'.\n\nTujuan: '+(name==='Aurora'?'Automasi antrean pasien':'Kelola penjualan toko'),tooLarge:false}});
+    return route.fulfill({json:{project:p,client:{name:'Tim '+name,company:name,leadId:null},context:{objective:'Konteks khusus '+name},documents:[file],invoices:[{id:'invoice-'+id,kind:'dp',amount:id==='project-a'?1500000:750000,currency:'IDR',status:'paid',dueAt:null,paidAt:at}],jobs:[{id:'job-'+id,type:'qa.run',status:'running',updatedAt:at}],events:[{id:'1',type:'prd.ready',at}]}});
+  });
+  await page.goto('http://localhost:3001/projects');
+  await page.getByRole('link').filter({hasText:'Automasi Klinik Aurora'}).waitFor();
+  await page.screenshot({path:'.playwright-cli/project-folders-desktop.png',fullPage:true});
+  await page.getByRole('textbox',{name:'Cari folder proyek'}).fill('Bumi');
+  if(await page.locator('.project-folder').count()!==1) throw Error('Search failed');
+  await page.getByRole('textbox',{name:'Cari folder proyek'}).fill('');
+  await page.getByRole('button',{name:'Diserahkan',exact:true}).click();
+  if(await page.locator('.project-folder').count()!==1) throw Error('Filter failed');
+  await page.getByRole('button',{name:'Semua',exact:true}).click();
+  await page.getByRole('link').filter({hasText:'Automasi Klinik Aurora'}).click();
+  await page.getByText('Konteks khusus Aurora',{exact:true}).waitFor();
+  await page.getByRole('tab',{name:'Dokumen (1)'}).click();
+  await page.getByRole('button').filter({hasText:'PRD.md'}).click();
+  await page.getByText('Tujuan: Automasi antrean pasien',{exact:false}).waitFor();
+  await page.screenshot({path:'.playwright-cli/project-document-desktop.png',fullPage:true});
+  await page.getByRole('tab',{name:'Invoice (1)'}).click();
+  if(!(await page.getByRole('tabpanel').innerText()).includes('1.500.000')) throw Error('Invoice scope A failed');
+  await page.getByRole('link',{name:'Semua folder'}).click();
+  await page.getByRole('link').filter({hasText:'CRM Toko Bumi'}).click();
+  await page.getByText('Konteks khusus Bumi',{exact:true}).waitFor();
+  if((await page.getByRole('main').innerText()).includes('Aurora')) throw Error('Context leaked across projects');
+  await page.getByRole('tab',{name:'Dokumen (1)'}).click();
+  await page.getByRole('button').filter({hasText:'PRD.md'}).click();
+  await page.getByText('Tujuan: Kelola penjualan toko',{exact:false}).waitFor();
+  const checks=[];
+  for(const width of [320,390,768,1024,1440]) {
+    await page.setViewportSize({width,height:1000});
+    checks.push({width,page:'detail',overflow:await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)});
+    await page.goto('http://localhost:3001/projects');
+    await page.locator('.project-folder').first().waitFor();
+    checks.push({width,page:'folders',overflow:await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)});
+    if(width===320) await page.screenshot({path:'.playwright-cli/project-folders-mobile.png',fullPage:true});
+    await page.goto('http://localhost:3001/projects/project-b');
+    await page.getByText('Konteks khusus Bumi',{exact:true}).waitFor();
+  }
+  await page.unrouteAll({behavior:'wait'});
+  await page.goto('http://localhost:3001/workflow');
+  await page.locator('.react-flow__node').first().waitFor();
+  await page.screenshot({path:'.playwright-cli/workflow-corrected.png',fullPage:true});
+  const nodeIds=await page.locator('.react-flow__node').evaluateAll(ns=>ns.map(n=>n.getAttribute('data-id')));
+  if(!['dp','final','demo','meeting','delivered'].every(id=>nodeIds.includes(id))) throw Error('Missing gate or branch');
+  const before=await page.locator('.react-flow__viewport').getAttribute('style');
+  await page.getByRole('button',{name:'Pembangunan & QA',exact:true}).click();
+  await page.waitForTimeout(500);
+  const after=await page.locator('.react-flow__viewport').getAttribute('style');
+  if(before===after) throw Error('Phase zoom failed');
+  return {pass:'Search, filter, folder navigation, unique context, documents, scoped invoices, workflow gates and phase zoom',checks,nodeCount:nodeIds.length};
+}

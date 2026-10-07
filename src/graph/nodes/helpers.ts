@@ -15,7 +15,8 @@ export function formatContext(docs: RetrievedDoc[], max = 6): string {
   return docs
     .slice(0, max)
     .map((d, i) => {
-      const tag = d.source === "knowledge" ? "KNOWLEDGE" : "MEMORY";
+      const tag =
+        d.source === "knowledge" ? "KNOWLEDGE" : d.source === "scout" ? "SCOUT" : "MEMORY";
       return `[${i + 1}] (${tag} · ${d.title} · score ${d.score.toFixed(2)})\n${d.content}`;
     })
     .join("\n\n");

@@ -1,0 +1,49 @@
+﻿{
+    "location":  "Batam",
+    "target":  20,
+    "already":  9,
+    "saved":  18,
+    "totalToday":  27,
+    "rounds":  [
+                   {
+                       "verticals":  [
+                                         "klinik tumbuh kembang anak",
+                                         "klinik kecantikan",
+                                         "klinik gigi"
+                                     ],
+                       "saved":  6,
+                       "skipped":  12,
+                       "excluded":  0
+                   },
+                   {
+                       "verticals":  [
+                                         "terapis anak / okupasi terapi",
+                                         "psikolog dan layanan konseling",
+                                         "klinik hewan"
+                                     ],
+                       "saved":  1,
+                       "skipped":  13,
+                       "excluded":  0
+                   },
+                   {
+                       "verticals":  [
+                                         "salon dan barbershop",
+                                         "laundry",
+                                         "katering"
+                                     ],
+                       "saved":  2,
+                       "skipped":  12,
+                       "excluded":  0
+                   },
+                   {
+                       "verticals":  [
+                                         "kursus bahasa dan bimbel",
+                                         "wedding organizer",
+                                         "travel umroh dan haji"
+                                     ],
+                       "saved":  9,
+                       "skipped":  13,
+                       "excluded":  0
+                   }
+               ]
+}

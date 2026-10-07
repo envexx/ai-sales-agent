@@ -45,13 +45,13 @@ export function OutreachPanel() {
 
   return (
     <Card>
-      <CardHeader className="flex-row items-center justify-between space-y-0">
+      <CardHeader className="flex flex-wrap items-start justify-between gap-3">
         <CardTitle className="flex items-center gap-2 text-sm font-medium">
           <Send className="size-4 text-muted-foreground" />
           Outreach Otomatis
         </CardTitle>
-        <span className="flex items-center gap-1.5 rounded border border-border bg-muted px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
-          <Clock className="size-3" />
+        <span className="flex max-w-full items-start gap-1.5 rounded border border-border bg-muted px-2 py-1 font-mono text-[11px] leading-5 text-muted-foreground">
+          <Clock className="mt-1 size-3 shrink-0" />
           {data?.workingHours ?? "—"}
         </span>
       </CardHeader>
@@ -79,7 +79,7 @@ export function OutreachPanel() {
           ))}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-3">
           <Button size="sm" variant="outline" onClick={() => runTick(false)} disabled={busy}>
             {busy ? <Loader2 className="size-3.5 animate-spin" /> : <Play className="size-3.5" />}
             Jalankan sekarang

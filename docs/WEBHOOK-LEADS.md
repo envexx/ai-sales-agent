@@ -72,7 +72,7 @@ jadi Anda tidak perlu mengubah format sumber.
 ### cURL — satu lead (pakai alias Indonesia)
 
 ```bash
-curl -X POST http://localhost:3000/webhook/leads \
+curl -X POST http://localhost:4000/webhook/leads \
   -H "content-type: application/json" \
   -H "x-api-key: $API_KEY" \
   -d '{ "nama": "Budi Santoso", "nomor": "081298765432",
@@ -83,7 +83,7 @@ curl -X POST http://localhost:3000/webhook/leads \
 ### cURL — banyak lead sekaligus
 
 ```bash
-curl -X POST http://localhost:3000/webhook/leads \
+curl -X POST http://localhost:4000/webhook/leads \
   -H "content-type: application/json" \
   -H "x-api-key: $API_KEY" \
   -d '{
@@ -99,7 +99,7 @@ curl -X POST http://localhost:3000/webhook/leads \
 ### JavaScript
 
 ```ts
-await fetch("http://localhost:3000/webhook/leads", {
+await fetch("http://localhost:4000/webhook/leads", {
   method: "POST",
   headers: { "content-type": "application/json", "x-api-key": process.env.API_KEY! },
   body: JSON.stringify({
@@ -114,7 +114,7 @@ await fetch("http://localhost:3000/webhook/leads", {
 import requests
 
 requests.post(
-    "http://localhost:3000/webhook/leads",
+    "http://localhost:4000/webhook/leads",
     headers={"x-api-key": API_KEY},
     json={"leads": [
         {"name": "Budi", "phone": "081298765432", "company": "CV Sinar Abadi"},
@@ -129,7 +129,7 @@ Tambahkan `?dryRun=true` untuk memeriksa format tanpa menulis ke database —
 berguna saat membangun integrasi:
 
 ```bash
-curl -X POST "http://localhost:3000/webhook/leads?dryRun=true" \
+curl -X POST "http://localhost:4000/webhook/leads?dryRun=true" \
   -H "content-type: application/json" \
   -d '{ "leader": "salah nama field" }'
 ```

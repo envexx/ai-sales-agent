@@ -1,0 +1,22 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e10]:
+      - strong [ref=e11]: Agent Company
+      - generic [ref=e12]: Living workspace · The Delegation
+    - generic [ref=e13]: Lokal · Belum terhubung
+    - generic [ref=e15]:
+      - button "15 agent" [ref=e16] [cursor=pointer]
+      - button "Layar penuh" [ref=e22] [cursor=pointer]
+  - main [ref=e28]:
+    - generic [ref=e29]: Menyiapkan ruang kerja dan kehidupan kantor…
+    - generic [ref=e30]:
+      - generic [ref=e31]:
+        - strong [ref=e32]: Kehidupan kantor
+        - generic [ref=e33]: 0 bekerja · 0 aktivitas lainnya
+      - generic [ref=e34]:
+        - button "Kantor hidup" [disabled] [pressed] [ref=e35] [cursor=pointer]
+        - button "Bekerja" [disabled] [ref=e36] [cursor=pointer]
+        - button "Waktu santai" [disabled] [ref=e37] [cursor=pointer]
+    - button "Seluruh workspace" [ref=e38] [cursor=pointer]
+    - generic: Drag untuk memutar · Scroll untuk zoom · Klik agent untuk melihat perannya
+    - generic: Karakter © Arturo Paracuellos · CC BY-NC 4.0

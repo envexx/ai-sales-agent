@@ -3,6 +3,11 @@ import { env } from "../config/env.js";
 export interface IncomingMessage {
   /** WhatsApp JID, e.g. `6281234567890@s.whatsapp.net`. */
   waJid: string;
+  /**
+   * JID `@lid` asli bila berbeda dari `waJid` (balasan lewat LinkedID). Dipakai
+   * untuk menyatukan balasan client ke lead nomor yang sama.
+   */
+  lidJid?: string | null;
   contactName: string | null;
   text: string;
   messageId: string | null;

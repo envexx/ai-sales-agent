@@ -1,0 +1,84 @@
+- generic [active] [ref=f4e1]:
+  - generic [ref=f4e2]:
+    - complementary [ref=f4e3]:
+      - button "Pilih workspace" [ref=f4e5]:
+        - generic [ref=f4e11]:
+          - generic [ref=f4e12]: Workspace
+          - generic [ref=f4e13]: AI Automation
+      - navigation [ref=f4e16]:
+        - paragraph [ref=f4e17]: Utama
+        - link "Ringkasan" [ref=f4e18] [cursor=pointer]:
+          - /url: /
+        - link "Alur Operasional" [ref=f4e24] [cursor=pointer]:
+          - /url: /operasional
+        - link "Approval" [ref=f4e30] [cursor=pointer]:
+          - /url: /approvals
+        - link "Tiket" [ref=f4e35] [cursor=pointer]:
+          - /url: /tickets
+        - button "Agent 0" [ref=f4e41]:
+          - generic [ref=f4e42]: Agent
+          - generic [ref=f4e43]: "0"
+        - button "Data & Operasi" [ref=f4e46]
+        - link "Pengaturan" [ref=f4e51] [cursor=pointer]:
+          - /url: /pengaturan
+      - generic [ref=f4e55]: Menghubungkan…
+    - main [ref=f4e59]:
+      - generic [ref=f4e61]:
+        - generic [ref=f4e62]:
+          - heading "Control Room" [level=1] [ref=f4e63]
+          - paragraph [ref=f4e64]: Lihat prioritas, kesehatan workflow, dan keputusan yang benar-benar membutuhkan Anda.
+        - button "Aktifkan tema gelap" [ref=f4e66]
+      - generic [ref=f4e68]:
+        - generic [ref=f4e69]:
+          - generic [ref=f4e71]:
+            - generic [ref=f4e72]: Total Agent
+            - generic [ref=f4e73]:
+              - generic [ref=f4e74]: "0"
+              - generic [ref=f4e75]: 0 divisi
+          - generic [ref=f4e81]:
+            - generic [ref=f4e82]: Sedang Bekerja
+            - generic [ref=f4e83]:
+              - generic [ref=f4e84]: "0"
+              - generic [ref=f4e85]: belum aktif
+          - generic [ref=f4e91]:
+            - generic [ref=f4e92]: Dalam Antrean
+            - generic [ref=f4e93]:
+              - generic [ref=f4e94]: "0"
+              - generic [ref=f4e95]: job menunggu
+          - generic [ref=f4e101]:
+            - generic [ref=f4e102]: Perlu Tindakan
+            - generic [ref=f4e103]:
+              - generic [ref=f4e104]: "0"
+              - generic [ref=f4e105]: item prioritas
+        - generic [ref=f4e114]:
+          - paragraph [ref=f4e115]: Operasional berjalan normal
+          - paragraph [ref=f4e116]: Tidak ada keputusan yang menunggu Anda.
+        - generic [ref=f4e117]:
+          - generic [ref=f4e118]:
+            - generic [ref=f4e119]: Status agent
+            - generic [ref=f4e120]: Ringkasan kondisi tim saat ini. Alur lengkap tersedia di menu terpisah.
+            - generic [ref=f4e121]: 0 total
+          - generic [ref=f4e123]:
+            - generic [ref=f4e124]:
+              - generic [ref=f4e125]:
+                - generic [ref=f4e127]: Bekerja
+                - generic [ref=f4e128]: "0"
+              - generic [ref=f4e129]:
+                - generic [ref=f4e131]: Menunggu
+                - generic [ref=f4e132]: "0"
+              - generic [ref=f4e133]:
+                - generic [ref=f4e135]: Bermasalah
+                - generic [ref=f4e136]: "0"
+              - generic [ref=f4e137]:
+                - generic [ref=f4e139]: Siap
+                - generic [ref=f4e140]: "0"
+            - generic [ref=f4e141]:
+              - button "Lihat semua agent" [ref=f4e142]
+              - link "Buka alur operasional" [ref=f4e143] [cursor=pointer]:
+                - /url: /operasional
+        - generic [ref=f4e145]:
+          - generic [ref=f4e146]: Aktivitas terbaru
+          - generic [ref=f4e149]: Perubahan paling baru di seluruh workflow.
+          - link "Lihat semua" [ref=f4e151] [cursor=pointer]:
+            - /url: /pipeline
+  - alert [ref=f4e152]

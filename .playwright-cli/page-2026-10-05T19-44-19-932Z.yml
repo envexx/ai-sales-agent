@@ -1,0 +1,303 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Pilih workspace" [ref=e5]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: Workspace
+          - generic [ref=e13]: AI Automation
+      - navigation [ref=e16]:
+        - paragraph [ref=e17]: Utama
+        - link "Ringkasan" [ref=e18] [cursor=pointer]:
+          - /url: /
+        - link "Alur Operasional" [ref=e24] [cursor=pointer]:
+          - /url: /operasional
+        - link "Approval 4" [ref=e30] [cursor=pointer]:
+          - /url: /approvals
+          - generic [ref=e34]: Approval
+          - generic [ref=e35]: "4"
+        - link "Tiket" [ref=e36] [cursor=pointer]:
+          - /url: /tickets
+        - button "Agent 14" [ref=e42]:
+          - generic [ref=e43]: Agent
+          - generic [ref=e44]: "14"
+        - button "Data & Operasi" [ref=e47]
+        - link "Pengaturan" [ref=e52] [cursor=pointer]:
+          - /url: /pengaturan
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - generic [ref=e62]: API terhubung
+          - generic [ref=e63]: deepseek-chat
+        - generic [ref=e64]:
+          - generic [ref=e65]: baileys
+          - generic [ref=e66]: live send
+          - generic "http://localhost:4000" [ref=e67]: emb:hash
+    - main [ref=e69]:
+      - generic [ref=e71]:
+        - generic [ref=e72]:
+          - heading "Alur Operasional" [level=1] [ref=e73]
+          - paragraph [ref=e74]: Pantau handoff lintas divisi dari akuisisi, deal desk, delivery, hingga layanan klien—tanpa kehilangan konteks penting.
+        - generic [ref=e75]:
+          - link "Workflow Sales" [ref=e76] [cursor=pointer]:
+            - /url: /workflow
+          - button "Aktifkan tema gelap" [ref=e77]
+      - generic [ref=e79]:
+        - generic [ref=e80]:
+          - generic [ref=e81]:
+            - paragraph [ref=e83]: Agent aktif
+            - paragraph [ref=e86]: "3"
+            - paragraph [ref=e87]: 0 bekerja · 3 antre
+          - generic [ref=e88]:
+            - paragraph [ref=e90]: Perlu perhatian
+            - paragraph [ref=e93]: "5"
+            - paragraph [ref=e94]: 1 error · 4 approval
+          - generic [ref=e95]:
+            - paragraph [ref=e97]: Job selesai
+            - paragraph [ref=e101]: "9"
+            - paragraph [ref=e102]: seluruh divisi
+          - generic [ref=e103]:
+            - paragraph [ref=e105]: Cakupan
+            - paragraph [ref=e110]: "6"
+            - paragraph [ref=e111]: 14 agent operasional
+        - generic [ref=e112]:
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - generic [ref=e118]: "Interaksi owner hanya di:"
+              - generic [ref=e119]: Preview
+              - generic [ref=e120]: Approval
+              - generic [ref=e121]: Emergency
+            - paragraph [ref=e127]: Supervisor meninjau sistem; chat klien tetap langsung ke Sales.
+          - generic [ref=e128]:
+            - textbox "Cari dalam alur operasional" [ref=e130]:
+              - /placeholder: Cari agent, divisi, atau peran…
+            - generic [ref=e131]:
+              - button "Semua 14" [pressed] [ref=e132]:
+                - text: Semua
+                - generic [ref=e133]: "14"
+              - button "Aktif 3" [ref=e134]:
+                - text: Aktif
+                - generic [ref=e135]: "3"
+              - button "Perhatian 3" [ref=e136]:
+                - text: Perhatian
+                - generic [ref=e137]: "3"
+              - button "Siap 10" [ref=e138]:
+                - text: Siap
+                - generic [ref=e139]: "10"
+            - button "Segarkan" [ref=e140]
+          - application [ref=e142]:
+            - generic [ref=e144]:
+              - generic:
+                - generic:
+                  - img:
+                    - group "Edge from D1 to D2":
+                      - generic [ref=e145]: QUALIFY / booking
+                  - img:
+                    - group "Edge from D2 to D3":
+                      - generic [ref=e147]: DP lunas → Preview → BUILT
+                  - img:
+                    - group "Edge from D3 to D4":
+                      - generic [ref=e149]: QA lulus → Docs siap
+                  - img:
+                    - group "Edge from D4 to D5":
+                      - generic [ref=e151]: Pelunasan final
+                  - img:
+                    - group "Edge from D0 to D3":
+                      - generic [ref=e153]: Pantau & koreksi
+                  - img:
+                    - group "Edge from D5 to D1":
+                      - generic [ref=e155]: Knowledge → pertumbuhan berikutnya
+                - generic:
+                  - group:
+                    - article:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - paragraph: Pengawasan
+                              - generic: D0
+                            - heading "Command Center" [level=3]
+                        - paragraph: Prioritas, koreksi, dan briefing harian
+                        - generic:
+                          - generic: Dalam antrean
+                          - generic: 1 job aktif
+                      - generic:
+                        - button "Supervisor Push Jejak seluruh agent → laporan harian & anomali 1 job":
+                          - generic:
+                            - generic:
+                              - generic: Supervisor
+                              - generic: Push
+                            - generic: Jejak seluruh agent → laporan harian & anomali
+                          - generic: 1 job
+                  - group:
+                    - article:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - paragraph: 01 · Akuisisi
+                              - generic: D1
+                            - heading "Growth & Acquisition" [level=3]
+                        - paragraph: Prospek terverifikasi dan siap ditindaklanjuti
+                        - generic:
+                          - generic: Dalam antrean
+                          - generic: 2 job aktif
+                      - generic:
+                        - button "Research Prospecting Push Niche + kota → prospek berstatus discovered 1 job":
+                          - generic:
+                            - generic:
+                              - generic: Research Prospecting
+                              - generic: Push
+                            - generic: Niche + kota → prospek berstatus discovered
+                          - generic: 1 job
+                        - button "Scout (Pain-Point) Gate Prospek + situs + knowledge → pain-point & scouted_ready 1 job":
+                          - generic:
+                            - generic:
+                              - generic: Scout (Pain-Point)
+                              - generic: Gate
+                            - generic: Prospek + situs + knowledge → pain-point & scouted_ready
+                          - generic: 1 job
+                        - button "Sales (Nadia) Turn-based Chat WhatsApp → kualifikasi, booking, dan jalur demo/meeting Siap":
+                          - generic:
+                            - generic:
+                              - generic: Sales (Nadia)
+                              - generic: Turn-based
+                            - generic: Chat WhatsApp → kualifikasi, booking, dan jalur demo/meeting
+                          - generic: Siap
+                  - group:
+                    - article:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - paragraph: 02 · Deal desk
+                              - generic: D2
+                            - heading "Deal Desk" [level=3]
+                        - paragraph: Ruang lingkup, legal, dan akses siap
+                        - generic: Siap
+                      - generic:
+                        - button "Scoper & PRD Pull Transkrip chat/meeting → PRD proyek Siap":
+                          - generic:
+                            - generic:
+                              - generic: Scoper & PRD
+                              - generic: Pull
+                            - generic: Transkrip chat/meeting → PRD proyek
+                          - generic: Siap
+                        - button "Legal & Finance Pull PRD + data klien → SPK, NDA, dan invoice DP Siap":
+                          - generic:
+                            - generic:
+                              - generic: Legal & Finance
+                              - generic: Pull
+                            - generic: PRD + data klien → SPK, NDA, dan invoice DP
+                          - generic: Siap
+                        - button "Intake & Credential Pull PRD → link aman → kredensial terenkripsi → preview Siap":
+                          - generic:
+                            - generic:
+                              - generic: Intake & Credential
+                              - generic: Pull
+                            - generic: PRD → link aman → kredensial terenkripsi → preview
+                          - generic: Siap
+                  - group:
+                    - article:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - paragraph: 03 · Delivery
+                              - generic: D3
+                            - heading "Delivery & Quality" [level=3]
+                        - paragraph: Solusi lolos QA dan terdokumentasi
+                        - generic: Bermasalah
+                      - generic:
+                        - button "QA & Guardrail Gate done_review → pengujian → laporan QA 1 done":
+                          - generic:
+                            - generic:
+                              - generic: QA & Guardrail
+                              - generic: Gate
+                            - generic: done_review → pengujian → laporan QA
+                          - generic: 1 done
+                        - button "Documentation & SOP Gate PRD + QA lulus → SOP & panduan → done 1 done":
+                          - generic:
+                            - generic:
+                              - generic: Documentation & SOP
+                              - generic: Gate
+                            - generic: PRD + QA lulus → SOP & panduan → done
+                          - generic: 1 done
+                  - group:
+                    - article:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - paragraph: 04 · Layanan klien
+                              - generic: D4
+                            - heading "Client Success" [level=3]
+                        - paragraph: Serah terima, dukungan, dan retensi
+                        - generic:
+                          - generic: Siap
+                          - generic: 4 approval
+                      - generic:
+                        - button "Handover & Final Invoice Push Proyek done → BAST + invoice pelunasan 2 done":
+                          - generic:
+                            - generic:
+                              - generic: Handover & Final Invoice
+                              - generic: Push
+                            - generic: Proyek done → BAST + invoice pelunasan
+                          - generic: 2 done
+                        - button "L1 Support & Triage Turn-based Keluhan → jawaban dari SOP / tiket / eskalasi Siap":
+                          - generic:
+                            - generic:
+                              - generic: L1 Support & Triage
+                              - generic: Turn-based
+                            - generic: Keluhan → jawaban dari SOP / tiket / eskalasi
+                          - generic: Siap
+                        - button "Infra & Cost Monitor Push Metrik infra & biaya → monitor.alert Siap":
+                          - generic:
+                            - generic:
+                              - generic: Infra & Cost Monitor
+                              - generic: Push
+                            - generic: Metrik infra & biaya → monitor.alert
+                          - generic: Siap
+                        - button "Retainer & Upsell Push Pelunasan + pemakaian → draf retainer / upsell Siap":
+                          - generic:
+                            - generic:
+                              - generic: Retainer & Upsell
+                              - generic: Push
+                            - generic: Pelunasan + pemakaian → draf retainer / upsell
+                          - generic: Siap
+                  - group:
+                    - article:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - paragraph: 05 · Flywheel
+                              - generic: D5
+                            - heading "Brand & Flywheel" [level=3]
+                        - paragraph: Pembelajaran kembali menjadi pertumbuhan
+                        - generic: Siap
+                      - generic:
+                        - button "Case Study & Content Push Hasil proyek → studi kasus anonim → knowledge base Siap":
+                          - generic:
+                            - generic:
+                              - generic: Case Study & Content
+                              - generic: Push
+                            - generic: Hasil proyek → studi kasus anonim → knowledge base
+                          - generic: Siap
+            - generic "Control Panel" [ref=e187]:
+              - button "Zoom In" [ref=e188] [cursor=pointer]
+              - button "Zoom Out" [ref=e191] [cursor=pointer]
+              - button "Fit View" [ref=e194] [cursor=pointer]
+            - img "Mini Map" [ref=e198]
+            - generic [ref=e200]:
+              - paragraph [ref=e201]: Cara membaca
+              - generic [ref=e202]:
+                - generic [ref=e203]: "Garis penuh: handoff utama"
+                - generic [ref=e204]: "Garis putus: pengawasan / flywheel"
+                - generic [ref=e205]: "Klik agent: buka detail"
+          - generic [ref=e207]:
+            - generic [ref=e208]: Bermasalah
+            - generic [ref=e211]: Bekerja
+            - generic [ref=e214]: Dalam antrean
+            - generic [ref=e217]: Siap
+            - generic [ref=e220]: Nonaktif
+            - generic [ref=e223]: Status diperbarui otomatis dari orchestrator.
+  - alert [ref=e224]

@@ -1,0 +1,112 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e11]:
+      - strong [ref=e12]: Agent Company
+      - generic [ref=e13]: The Delegation · Office studio
+    - generic [ref=e14]: Pratinjau lokal · Belum terhubung
+    - link "The Delegation" [ref=e16] [cursor=pointer]:
+      - /url: https://github.com/arturitu/the-delegation
+  - generic [ref=e20]:
+    - complementary [ref=e21]:
+      - generic [ref=e22]:
+        - heading "Office" [level=1] [ref=e27]
+        - generic [ref=e28]: "15"
+      - paragraph [ref=e29]: Ruang kerja untuk setiap peran.Pilih agent untuk melihat mejanya.
+      - button "Seluruh kantor" [ref=e30] [cursor=pointer]
+      - navigation "Ruangan dan agent" [ref=e39]:
+        - generic [ref=e40]:
+          - heading "Supervisor 1" [level=2] [ref=e41]:
+            - text: Supervisor
+            - generic [ref=e42]: "1"
+          - button "… Memuat Animasi lokal" [ref=e43] [cursor=pointer]:
+            - generic [ref=e44]: …
+            - generic [ref=e45]: Memuat
+            - generic "Animasi lokal" [ref=e46]
+        - generic [ref=e47]:
+          - heading "Sales & Research 3" [level=2] [ref=e48]:
+            - text: Sales & Research
+            - generic [ref=e49]: "3"
+          - button "… Memuat Animasi lokal" [ref=e50] [cursor=pointer]:
+            - generic [ref=e51]: …
+            - generic [ref=e52]: Memuat
+            - generic "Animasi lokal" [ref=e53]
+          - button "… Memuat Animasi lokal" [ref=e54] [cursor=pointer]:
+            - generic [ref=e55]: …
+            - generic [ref=e56]: Memuat
+            - generic "Animasi lokal" [ref=e57]
+          - button "… Memuat Animasi lokal" [ref=e58] [cursor=pointer]:
+            - generic [ref=e59]: …
+            - generic [ref=e60]: Memuat
+            - generic "Animasi lokal" [ref=e61]
+        - generic [ref=e62]:
+          - heading "Delivery & Quality 4" [level=2] [ref=e63]:
+            - text: Delivery & Quality
+            - generic [ref=e64]: "4"
+          - button "… Memuat Animasi lokal" [ref=e65] [cursor=pointer]:
+            - generic [ref=e66]: …
+            - generic [ref=e67]: Memuat
+            - generic "Animasi lokal" [ref=e68]
+          - button "… Memuat Animasi lokal" [ref=e69] [cursor=pointer]:
+            - generic [ref=e70]: …
+            - generic [ref=e71]: Memuat
+            - generic "Animasi lokal" [ref=e72]
+          - button "… Memuat Animasi lokal" [ref=e73] [cursor=pointer]:
+            - generic [ref=e74]: …
+            - generic [ref=e75]: Memuat
+            - generic "Animasi lokal" [ref=e76]
+          - button "… Memuat Animasi lokal" [ref=e77] [cursor=pointer]:
+            - generic [ref=e78]: …
+            - generic [ref=e79]: Memuat
+            - generic "Animasi lokal" [ref=e80]
+        - generic [ref=e81]:
+          - heading "Operations & Support 4" [level=2] [ref=e82]:
+            - text: Operations & Support
+            - generic [ref=e83]: "4"
+          - button "… Memuat Animasi lokal" [ref=e84] [cursor=pointer]:
+            - generic [ref=e85]: …
+            - generic [ref=e86]: Memuat
+            - generic "Animasi lokal" [ref=e87]
+          - button "… Memuat Animasi lokal" [ref=e88] [cursor=pointer]:
+            - generic [ref=e89]: …
+            - generic [ref=e90]: Memuat
+            - generic "Animasi lokal" [ref=e91]
+          - button "… Memuat Animasi lokal" [ref=e92] [cursor=pointer]:
+            - generic [ref=e93]: …
+            - generic [ref=e94]: Memuat
+            - generic "Animasi lokal" [ref=e95]
+          - button "… Memuat Animasi lokal" [ref=e96] [cursor=pointer]:
+            - generic [ref=e97]: …
+            - generic [ref=e98]: Memuat
+            - generic "Animasi lokal" [ref=e99]
+        - generic [ref=e100]:
+          - heading "Growth & Content 3" [level=2] [ref=e101]:
+            - text: Growth & Content
+            - generic [ref=e102]: "3"
+          - button "… Memuat Animasi lokal" [ref=e103] [cursor=pointer]:
+            - generic [ref=e104]: …
+            - generic [ref=e105]: Memuat
+            - generic "Animasi lokal" [ref=e106]
+          - button "… Memuat Animasi lokal" [ref=e107] [cursor=pointer]:
+            - generic [ref=e108]: …
+            - generic [ref=e109]: Memuat
+            - generic "Animasi lokal" [ref=e110]
+          - button "… Memuat Animasi lokal" [ref=e111] [cursor=pointer]:
+            - generic [ref=e112]: …
+            - generic [ref=e113]: Memuat
+            - generic "Animasi lokal" [ref=e114]
+      - generic [ref=e115]:
+        - strong [ref=e116]: Mode desain kantor
+        - paragraph [ref=e117]: Status dan animasi adalah simulasi lokal. Belum ada tugas bisnis atau koneksi layanan AI.
+    - main [ref=e118]:
+      - generic [ref=e119]:
+        - generic [ref=e120]:
+          - heading "Kantor tim" [level=2] [ref=e121]
+          - paragraph [ref=e122]: 5 ruang kerja · 1 ruang rapat · 15 meja pribadi
+        - button "Simulasikan istirahat" [disabled] [ref=e123]
+      - generic [ref=e127]:
+        - generic [ref=e128]: Menyiapkan kantor dan 15 agent…
+        - generic: Memuat model 3D
+        - generic: Drag untuk memutar · Scroll untuk zoom · Pilih agent di daftar
+      - generic [ref=e130]:
+        - generic [ref=e131]: Meja 75 cm · kursi 46 cm · pintu 140 cm
+        - generic [ref=e135]: Ruangan dan jalur berjalan memiliki batas fisik.

@@ -1,0 +1,11 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - complementary [ref=f1e3]
+    - main [ref=f1e5]:
+      - generic [ref=f1e7]:
+        - heading "Agent" [level=1] [ref=f1e9]
+        - button "Aktifkan tema gelap" [ref=f1e11]
+      - generic [ref=f1e19]:
+        - paragraph [ref=f1e20]: Memuat agent…
+        - paragraph [ref=f1e21]: Pilih agent dari menu di samping.
+  - button "Open Next.js Dev Tools" [ref=f1e27] [cursor=pointer]

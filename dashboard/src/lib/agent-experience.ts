@@ -1,0 +1,147 @@
+export interface AgentExperience {
+  purpose: string;
+  input: string;
+  work: string;
+  output: string;
+  owner: string;
+  empty: string;
+  action: { label: string; href: string };
+}
+
+// Mengikuti peran dan gate di docs/FLOW.md; bukan daftar kemampuan umum AI.
+export const AGENT_EXPERIENCE: Record<string, AgentExperience> = {
+  supervisor: {
+    purpose: "Pahami hasil kerja seluruh tim dan penyimpangan yang perlu diperiksa.",
+    input: "Laporan agent, kondisi antrean, dan jadwal briefing harian.",
+    work: "Meninjau operasional, menandai anomali, lalu merangkum untuk Anda.",
+    output: "Briefing harian dan hasil peninjauan.",
+    owner: "Tinjau penyimpangan dan keputusan yang membutuhkan persetujuan Anda.",
+    empty: "Briefing dan hasil peninjauan akan muncul setelah jadwal Supervisor berjalan.",
+    action: { label: "Tinjau keputusan", href: "/approvals" },
+  },
+  prospecting: {
+    purpose: "Bangun stok calon klien lalu pastikan layak didekati sebelum masuk Sales.",
+    input: "Target pencarian bisnis, jadwal harian, dan stok prospek discovered.",
+    work: "Mencari bisnis via Google Maps, melengkapi kontak, lalu mengaudit pain-point & sudut pendekatan.",
+    output: "Prospek baru (discovered) dan lead scouted_ready beserta hasil audit untuk Sales.",
+    owner: "Periksa hasil pencarian, kelengkapan kontak, dan kualitas audit; Sales menunggu lead yang siap.",
+    empty: "Prospek dan audit muncul setelah pencarian/audit berjalan.",
+    action: { label: "Periksa prospek & audit", href: "/leads" },
+  },
+  sales: {
+    purpose: "Ikuti percakapan klien hingga kebutuhan dan jalur penjualan jelas.",
+    input: "Pesan WhatsApp klien dan lead yang sudah scouted_ready.",
+    work: "Mengualifikasi kebutuhan, menawarkan demo atau meeting, dan meminta PRD.",
+    output: "Percakapan, booking, serta kebutuhan klien untuk Scoper dan Legal.",
+    owner: "Hubungkan WhatsApp. Untuk jalur meeting, lengkapi transkrip pada proyek.",
+    empty: "Evaluasi percakapan, outreach, dan booking akan muncul setelah Sales berinteraksi dengan klien.",
+    action: { label: "Buka percakapan lead", href: "/leads" },
+  },
+  scoper: {
+    purpose: "Ubah kebutuhan klien menjadi spesifikasi yang bisa Anda bangun.",
+    input: "Permintaan Sales, transkrip chat, dan catatan meeting bila dipilih.",
+    work: "Menyusun ruang lingkup, PRD, integrasi, dan checklist teknis.",
+    output: "PRD serta checklist tersimpan di proyek.",
+    owner: "Baca PRD; lengkapi catatan meeting agar kebutuhan tidak terlewat.",
+    empty: "PRD muncul setelah Sales meminta scoping dan sumber kebutuhan tersedia.",
+    action: { label: "Baca PRD proyek", href: "/projects" },
+  },
+  legal: {
+    purpose: "Siapkan dokumen kerja sama dan lacak pembayaran klien.",
+    input: "PRD, permintaan Sales, dan informasi pembayaran.",
+    work: "Membuat SPK, NDA, invoice DP, dan memverifikasi pembayaran.",
+    output: "Dokumen legal, invoice, dan catatan pembayaran.",
+    owner: "Periksa dokumen dan status pembayaran sebelum melanjutkan proyek.",
+    empty: "Dokumen dan pembayaran muncul setelah permintaan Legal diproses.",
+    action: { label: "Periksa invoice", href: "/invoices" },
+  },
+  intake: {
+    purpose: "Kumpulkan akses klien agar proyek siap Anda kerjakan.",
+    input: "Kebutuhan akses dari PRD dan tahap persiapan proyek.",
+    work: "Membuat link formulir aman dan menyimpan kredensial ke vault terenkripsi.",
+    output: "Permintaan akses dan konfirmasi kredensial tersimpan.",
+    owner: "Saat proyek preview, tinjau PRD dan ketersediaan akses lalu bangun sistem.",
+    empty: "Permintaan akses dan konfirmasi pengisian tampil setelah Intake berjalan.",
+    action: { label: "Periksa kesiapan proyek", href: "/projects" },
+  },
+  qa: {
+    purpose: "Pastikan hasil pembangunan layak diserahkan, lalu lengkapi panduannya.",
+    input: "Proyek selesai dibangun (done_review) dan PRD.",
+    work: "Memeriksa webhook/struktur JSON/guardrail, lalu menyusun SOP operasional & panduan pengguna.",
+    output: "Laporan QA (lulus/perbaikan), lalu SOP & panduan di workspace proyek.",
+    owner: "Tandai pembangunan selesai pada proyek; perbaiki temuan jika QA gagal.",
+    empty: "Pemeriksaan & dokumentasi muncul setelah proyek ditandai selesai dibangun.",
+    action: { label: "Tinjau hasil QA & dokumen", href: "/projects" },
+  },
+  handover: {
+    purpose: "Selesaikan serah terima dengan dokumen dan pelunasan yang jelas.",
+    input: "Proyek selesai beserta dokumentasi yang siap.",
+    work: "Menyiapkan BAST dan invoice pelunasan untuk ditinjau.",
+    output: "Paket serah terima yang menunggu persetujuan pengiriman.",
+    owner: "Tinjau paket dan setujui pengiriman melalui Approval.",
+    empty: "Paket serah terima dibuat setelah dokumentasi proyek siap.",
+    action: { label: "Tinjau persetujuan serah terima", href: "/approvals" },
+  },
+  support: {
+    purpose: "Tangani keluhan klien dan kenali kasus yang membutuhkan Anda.",
+    input: "Keluhan klien yang diteruskan oleh Sales.",
+    work: "Mengklasifikasi keluhan dan menyusun jawaban berdasarkan SOP untuk Sales.",
+    output: "Tiket, jawaban untuk Sales, atau eskalasi darurat.",
+    owner: "Tangani tiket darurat; Sales meneruskan jawaban ke klien.",
+    empty: "Tiket dan eskalasi muncul setelah Sales meneruskan keluhan klien.",
+    action: { label: "Tangani tiket", href: "/tickets" },
+  },
+  monitor: {
+    purpose: "Kenali gangguan layanan dan penurunan kinerja agent sebelum menghambat tim.",
+    input: "Kondisi runtime, antrean, tiket, plus kinerja & pelajaran tiap agent.",
+    work: "Memeriksa memori, pekerjaan gagal, tiket darurat, dan kinerja agent (job gagal, rasio sukses, usulan perbaikan).",
+    output: "Hasil pemeriksaan + alert (infra & kinerja agent) menuju Anda dan Supervisor.",
+    owner: "Tinjau alert, usulan perbaikan, dan masalah yang dilaporkan pada aktivitas Monitor.",
+    empty: "Pemeriksaan dan alert muncul setelah jadwal Monitor berjalan.",
+    action: { label: "Lihat pemeriksaan Monitor", href: "/agents/monitor?tab=aktivitas" },
+  },
+  developer: {
+    purpose: "Jaga situs yang sudah dibangun tetap sehat & mudah ditemukan, dan bangun otomasi/AI agent baru.",
+    input: "Repo GitHub, URL situs, dan platform deploy (Vercel/Cloudflare/Supabase) proyek.",
+    work: "Mengaudit SEO/performa/keamanan, menyusun rencana, lalu mengerjakannya lewat OpenCode (PR ke GitHub).",
+    output: "Rencana perbaikan + perubahan kode (Pull Request) yang menunggu persetujuan Anda.",
+    owner: "Tinjau rencana & PR, lalu setujui sebelum push/deploy dijalankan.",
+    empty: "Rencana muncul setelah proyek selesai atau saat Anda meminta audit/pembangunan.",
+    action: { label: "Tinjau approval developer", href: "/approvals" },
+  },
+  content: {
+    purpose: "Jadikan hasil proyek sebagai bukti untuk penjualan berikutnya.",
+    input: "Proyek selesai dan pembayaran pelunasan.",
+    work: "Menyusun studi kasus lalu memasukkannya ke knowledge base.",
+    output: "Studi kasus yang dapat digunakan kembali oleh Sales dan Scout.",
+    owner: "Tinjau studi kasus dan materi yang tersedia di knowledge base.",
+    empty: "Studi kasus muncul setelah proyek selesai dan pekerjaan Content berjalan.",
+    action: { label: "Baca knowledge base", href: "/knowledge" },
+  },
+};
+
+export const ACTIVITY_LABELS: Record<string, string> = {
+  briefing: "Menyusun briefing harian", "briefing.sent": "Briefing harian terkirim",
+  "supervisor.review": "Meninjau operasional tim",
+  "prospecting.scan": "Mencari prospek bisnis", "prospecting.daily": "Menjalankan pencarian harian",
+  "prospecting.completed": "Pencarian prospek selesai", "prospect.discovered": "Prospek baru ditemukan",
+  "scout.audit": "Mengaudit prospek", "scout.daily": "Menjalankan audit harian",
+  "prospect.scouted": "Audit prospek selesai", "lead.scouted_ready": "Lead siap untuk Sales",
+  "scoper.prd": "Menyusun PRD", "prd.ready": "PRD siap ditinjau",
+  "legal.draft": "Menyusun dokumen legal", "legal.ready": "Dokumen legal siap",
+  "invoice.dp_paid": "Pembayaran DP terverifikasi", "invoice.final_paid": "Pelunasan terverifikasi",
+  "intake.collect": "Menyiapkan permintaan akses", "intake.requested": "Formulir akses dibuat",
+  "credential.stored": "Kredensial tersimpan di vault",
+  "qa.run": "Memeriksa kelayakan proyek", "qa.completed": "Pemeriksaan QA selesai",
+  "scribe.docs": "Menyusun SOP dan panduan", "docs.ready": "Dokumentasi siap",
+  "handover.finalize": "Menyiapkan serah terima", "handover.ready": "Paket serah terima siap",
+  "support.triage": "Menangani keluhan", "support.ticket": "Tiket dukungan dibuat",
+  "support.escalated": "Keluhan dieskalasikan",
+  "monitor.check": "Memeriksa kondisi operasional", "monitor.alert": "Masalah operasional terdeteksi",
+  "developer.maintain": "Mengaudit situs & menyusun rencana perbaikan", "developer.build": "Merencanakan otomasi/AI agent baru",
+  "developer.sweep": "Mengaudit situs terpasang", "developer.target_registered": "Target developer terdaftar",
+  "developer.plan_ready": "Rencana developer siap", "developer.applied": "Perubahan diterapkan (OpenCode)",
+  "developer.pr_opened": "Pull Request dibuka", "developer.deployed": "Deploy diproses",
+  "content.case_study": "Menyusun studi kasus", "content.ready": "Studi kasus siap",
+  "case_study.ingested": "Studi kasus masuk knowledge base",
+};

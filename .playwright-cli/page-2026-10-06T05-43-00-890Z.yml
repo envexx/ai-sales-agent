@@ -1,0 +1,47 @@
+- generic [active] [ref=f205e1]:
+  - generic [ref=f205e2]:
+    - complementary [ref=f205e3]:
+      - link "Nadia Business" [ref=f205e4] [cursor=pointer]:
+        - /url: /
+        - text: Nadia
+        - generic [ref=f205e8]: Business
+      - navigation "Navigasi utama" [ref=f205e9]:
+        - generic [ref=f205e10]:
+          - paragraph [ref=f205e11]: Bisnis
+          - link "Proses bisnis" [ref=f205e12] [cursor=pointer]:
+            - /url: /
+          - link "Workflow" [ref=f205e15] [cursor=pointer]:
+            - /url: /workflow
+          - link "Approval" [ref=f205e20] [cursor=pointer]:
+            - /url: /approvals
+          - link "Tiket" [ref=f205e24] [cursor=pointer]:
+            - /url: /tickets
+        - generic [ref=f205e28]:
+          - paragraph [ref=f205e29]: Data & Operasi
+          - link "Leads & percakapan" [ref=f205e30] [cursor=pointer]:
+            - /url: /leads
+          - link "Proyek" [ref=f205e35] [cursor=pointer]:
+            - /url: /projects
+          - link "Invoice" [ref=f205e38] [cursor=pointer]:
+            - /url: /invoices
+          - link "Booking" [ref=f205e41] [cursor=pointer]:
+            - /url: /booking
+          - link "Kualitas balasan" [ref=f205e46] [cursor=pointer]:
+            - /url: /kualitas
+          - link "Knowledge" [ref=f205e50] [cursor=pointer]:
+            - /url: /knowledge
+          - link "Aktivitas bisnis" [ref=f205e53] [cursor=pointer]:
+            - /url: /pipeline
+      - generic [ref=f205e56]:
+        - link "Claw3D office ↗" [ref=f205e57] [cursor=pointer]:
+          - /url: http://localhost:3000
+        - link "Pengaturan" [ref=f205e61] [cursor=pointer]:
+          - /url: /pengaturan
+        - generic [ref=f205e65]: Menghubungkan…
+    - main [ref=f205e69]:
+      - generic [ref=f205e71]:
+        - heading "Proses bisnis" [level=1] [ref=f205e73]
+        - link "Lihat workflow ↗" [ref=f205e75] [cursor=pointer]:
+          - /url: /workflow
+      - generic "Memuat kanban" [ref=f205e77]
+  - button "Open Next.js Dev Tools" [ref=f205e83] [cursor=pointer]

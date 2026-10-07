@@ -249,7 +249,7 @@ export function WorkflowCanvas() {
           size={1}
           color={resolvedTheme === "dark" ? "#333338" : "#e5e7eb"}
         />
-        <Controls className="!bg-card !border !shadow-sm !text-foreground" />
+        <Controls position="top-left" className="!bg-card !border !shadow-sm !text-foreground" />
         <MiniMap
           zoomable
           pannable

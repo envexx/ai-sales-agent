@@ -1,5 +1,6 @@
 import { env } from "../config/env.js";
 import { loggerFor } from "../config/logger.js";
+import { emitEvent } from "../pipeline/events.js";
 import { textInvoke } from "../llm/index.js";
 import { businessContext, SHARED_RULES } from "../graph/prompts.js";
 import {
@@ -8,7 +9,9 @@ import {
   recordOutreach,
 } from "../repository/index.js";
 import type { LeadRecord } from "../types.js";
-import { getTransport } from "../whatsapp/index.js";
+import { getTransport, whatsapp } from "../whatsapp/index.js";
+import { dayPart, timeGreetingContext } from "../util/time.js";
+import { stripPlaceholderUrls } from "../util/sanitize.js";
 
 const log = loggerFor("outreach");
 
@@ -54,10 +57,11 @@ export function workingHoursLabel(): string {
 
 function fallbackMessage(lead: LeadRecord, attempt: number): string {
   const name = lead.name ? ` ${lead.name}` : "";
+  const greeting = `Selamat ${dayPart()}`;
   if (attempt > 1) {
-    return `Selamat pagi${name}, saya Nadia dari ${env.BUSINESS_NAME}. Mohon maaf mengganggu kembali — saya ingin menindaklanjuti pesan saya sebelumnya. Apakah Bapak/Ibu berkenan saya jelaskan singkat? Jika tidak berkenan, cukup balas STOP.`;
+    return `${greeting}${name}, saya Nadia dari ${env.BUSINESS_NAME}. Mohon maaf mengganggu kembali — saya ingin menindaklanjuti pesan saya sebelumnya. Apakah Bapak/Ibu berkenan saya jelaskan singkat? Jika tidak berkenan, cukup balas STOP.`;
   }
-  return `Selamat pagi${name}, saya Nadia dari ${env.BUSINESS_NAME}. Kami membantu bisnis yang prosesnya masih manual dengan solusi digital dan automasi. Boleh saya tahu sedikit tantangan operasional yang sedang dihadapi saat ini? Jika tidak berkenan, cukup balas STOP.`;
+  return `${greeting}${name}, saya Nadia dari ${env.BUSINESS_NAME}. Kami membantu bisnis yang prosesnya masih manual dengan solusi digital dan automasi. Boleh saya tahu sedikit tantangan operasional yang sedang dihadapi saat ini? Jika tidak berkenan, cukup balas STOP.`;
 }
 
 /** Write one outbound message for a prospect (opening or follow-up). */
@@ -66,6 +70,30 @@ export async function composeOutreachMessage(
   attempt: number,
 ): Promise<string> {
   const isFollowUp = attempt > 1;
+  const scout = (
+    lead.meta as {
+      scout?: {
+        painPoints?: string[];
+        opportunity?: string;
+        offerings?: string[];
+        approach?: string;
+        outreachAngle?: string;
+      };
+    }
+  )?.scout;
+  const scoutBlock =
+    scout && (scout.painPoints?.length || scout.outreachAngle || scout.opportunity)
+      ? [
+          "Analisis Scout (pakai untuk menyesuaikan sudut pendekatan; jangan sebut istilah teknis):",
+          scout.painPoints?.length ? `- Pain point: ${scout.painPoints.join("; ")}` : "",
+          scout.opportunity ? `- Peluang otomasi: ${scout.opportunity}` : "",
+          scout.offerings?.length ? `- Bisa ditawarkan: ${scout.offerings.join("; ")}` : "",
+          scout.approach ? `- Cara mendekati: ${scout.approach}` : "",
+          scout.outreachAngle ? `- Sudut value-first: ${scout.outreachAngle}` : "",
+        ]
+          .filter(Boolean)
+          .join("\n")
+      : "";
   try {
     const human = [
       isFollowUp
@@ -75,6 +103,9 @@ export async function composeOutreachMessage(
       lead.company ? `Perusahaan: ${lead.company}` : "",
       lead.source ? `Sumber lead: ${lead.source}` : "",
       lead.notes ? `Catatan dari tim sales: ${lead.notes}` : "",
+      scoutBlock,
+      timeGreetingContext(),
+      'WAJIB: awali pesan dengan sapaan waktu yang benar sesuai konteks waktu di atas (mis. "Selamat siang", "Selamat sore"). Jangan salah menyebut waktu.',
       "Aturan: maksimal ~60 kata, tanpa markdown, maksimal 1 emoji, jangan menyebut harga final, jangan menjanjikan hasil, dan jangan mengaku sudah kenal pribadi.",
       'Wajib diakhiri dengan tepat baris ini: "Jika tidak berkenan, cukup balas STOP."',
       "Balas hanya isi pesannya saja.",
@@ -108,7 +139,7 @@ export interface OutreachResult {
 export async function sendOutreach(lead: LeadRecord): Promise<OutreachResult> {
   const attempt = lead.outreachAttempts + 1;
   const kind: "opening" | "follow_up" = attempt > 1 ? "follow_up" : "opening";
-  const message = await composeOutreachMessage(lead, attempt);
+  const message = stripPlaceholderUrls(await composeOutreachMessage(lead, attempt));
 
   const hasMore = attempt + 1 <= env.OUTREACH_MAX_ATTEMPTS;
   const nextStatus = hasMore ? "follow_up" : "done";
@@ -152,6 +183,13 @@ export async function sendOutreach(lead: LeadRecord): Promise<OutreachResult> {
     meta: { outreach: true, attempt, kind, status },
   }).catch(() => {});
 
+  // Tandai Sales "bekerja" saat mengirim outreach (dipakai status agent & office).
+  await emitEvent("sales.outreach", {
+    entityType: "lead",
+    entityId: lead.id,
+    payload: { attempt, kind, status },
+  }).catch(() => {});
+
   return { leadId: lead.id, name: lead.name, attempt, status, message, error: error ?? undefined };
 }
 
@@ -177,6 +215,18 @@ export async function runOutreachTick(opts: { force?: boolean } = {}): Promise<T
   }
   if (!within && !opts.force) {
     return { ran: false, reason: `di luar jam kerja (${workingHoursLabel()})`, sent: 0, results: [], withinWorkingHours: within };
+  }
+
+  // Never consume a lead's attempt while WhatsApp is not connected.
+  const waState = env.WA_TRANSPORT === "baileys" ? whatsapp.status().state : "connected";
+  if (waState !== "connected") {
+    return {
+      ran: false,
+      reason: `WhatsApp belum terhubung (state: ${waState})`,
+      sent: 0,
+      results: [],
+      withinWorkingHours: within,
+    };
   }
 
   ticking = true;

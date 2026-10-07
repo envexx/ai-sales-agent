@@ -7,6 +7,7 @@ import type {
   LeadSegment,
   Reflection,
 } from "../types.js";
+import type { ResearchBrief, ResearchReportRecord } from "../research/types.js";
 
 interface LeadRow {
   id: string;
@@ -27,6 +28,7 @@ interface LeadRow {
   last_outreach_at: Date | null;
   next_follow_up_at: Date | null;
   opt_out: boolean | null;
+  readiness: string | null;
 }
 
 const toLead = (r: LeadRow): LeadRecord => ({
@@ -48,6 +50,7 @@ const toLead = (r: LeadRow): LeadRecord => ({
   lastOutreachAt: r.last_outreach_at ? r.last_outreach_at.toISOString() : null,
   nextFollowUpAt: r.next_follow_up_at ? r.next_follow_up_at.toISOString() : null,
   optOut: r.opt_out ?? false,
+  readiness: r.readiness ?? "discovered",
 });
 
 /* ────────────────────────────── leads ─────────────────────────────── */
@@ -57,11 +60,14 @@ export async function upsertLeadContact(params: {
   name?: string | null;
 }): Promise<LeadRecord> {
   const { rows } = await query<LeadRow>(
-    `INSERT INTO leads (id, wa_jid, name, kind, last_seen)
-     VALUES ($1, $2, $3, 'inbound', now())
+    `INSERT INTO leads (id, wa_jid, name, kind, readiness, last_seen)
+     VALUES ($1, $2, $3, 'inbound', 'scouted_ready', now())
      ON CONFLICT (wa_jid) DO UPDATE
        SET last_seen = now(),
            name = COALESCE(EXCLUDED.name, leads.name),
+           -- lead inbound yang menulis ke kita selalu siap (tidak kena gate outreach)
+           readiness = CASE WHEN leads.readiness = 'discovered'
+                            THEN 'scouted_ready' ELSE leads.readiness END,
            -- an inbound reply to an outbound message counts as "replied"
            outreach_status = CASE
              WHEN leads.outreach_status IN ('pending','messaged','follow_up')
@@ -89,6 +95,29 @@ export async function getLeadByJid(waJid: string): Promise<LeadRecord | null> {
     waJid,
   ]);
   return rows[0] ? toLead(rows[0]) : null;
+}
+
+/**
+ * Satukan lead lama (mis. JID `@lid`) ke lead tujuan: pindahkan percakapan
+ * (+ evaluasi/booking bila ada) lalu hapus lead lama. Dipakai agar balasan yang
+ * datang via LinkedID menyatu dengan lead nomor tempat kita meng-outreach.
+ */
+export async function mergeLeadByJid(oldJid: string, targetLeadId: string): Promise<void> {
+  const { rows } = await query<{ id: string }>(
+    `SELECT id FROM leads WHERE wa_jid = $1 LIMIT 1`,
+    [oldJid],
+  );
+  const oldId = rows[0]?.id;
+  if (!oldId || oldId === targetLeadId) return;
+
+  await query(`UPDATE conversations SET lead_id = $1 WHERE lead_id = $2`, [targetLeadId, oldId]);
+  for (const table of ["evaluations", "bookings", "meeting_notes"]) {
+    await query(`UPDATE ${table} SET lead_id = $1 WHERE lead_id = $2`, [
+      targetLeadId,
+      oldId,
+    ]).catch(() => {});
+  }
+  await query(`DELETE FROM leads WHERE id = $1`, [oldId]);
 }
 
 export async function updateLead(params: {
@@ -125,6 +154,34 @@ export async function listLeads(limit = 50, offset = 0): Promise<LeadRecord[]> {
     [limit, offset],
   );
   return rows.map(toLead);
+}
+
+/** Lead prospek dengan status kesiapan tertentu (untuk gate/kuota harian). */
+export async function listLeadsByReadiness(
+  readiness: string,
+  limit: number,
+): Promise<LeadRecord[]> {
+  const { rows } = await query<LeadRow>(
+    `SELECT * FROM leads
+     WHERE kind = 'prospect' AND readiness = $1 AND opt_out = false
+     ORDER BY first_seen ASC LIMIT $2`,
+    [readiness, limit],
+  );
+  return rows.map(toLead);
+}
+
+/** Jumlah prospek (`kind='prospect'`) tersimpan sejak waktu tertentu (opsional per lokasi). */
+export async function countProspectsSince(
+  sinceIso: string,
+  location?: string,
+): Promise<number> {
+  const { rows } = await query<{ c: number }>(
+    `SELECT count(*)::int AS c FROM leads
+     WHERE kind = 'prospect' AND first_seen >= $1
+       AND ($2::text IS NULL OR meta->'prospect'->>'location' = $2)`,
+    [sinceIso, location ?? null],
+  );
+  return rows[0]?.c ?? 0;
 }
 
 /* ───────────────────── prospects & outreach ──────────────────────── */
@@ -177,6 +234,57 @@ export async function upsertProspect(params: {
   return toLead(rows[0]!);
 }
 
+/** Kunci pembanding nama/alamat (huruf kecil, tanpa tanda baca). */
+function businessKey(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const key = value.toLowerCase().replace(/[^a-z0-9]+/g, "");
+  return key.length >= 4 ? key : null;
+}
+
+/** Host domain dari URL situs (untuk pencocokan bisnis yang sama). */
+function websiteHost(value: string | null | undefined): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value.startsWith("http") ? value : `https://${value}`);
+    return url.hostname.replace(/^www\./, "").toLowerCase() || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Cari prospek/lead yang **bisnisnya sama** meski nomornya berbeda:
+ * cocokkan nama (ternormalisasi) + alamat ATAU domain situs.
+ *
+ * Sengaja hanya mencocokkan bila ada alamat atau situs (bukan nama saja) agar
+ * tidak salah menandai cabang berbeda sebagai duplikat.
+ */
+export async function findProspectByBusiness(params: {
+  company?: string | null;
+  address?: string | null;
+  website?: string | null;
+}): Promise<LeadRecord | null> {
+  const name = businessKey(params.company);
+  const address = businessKey(params.address);
+  const host = websiteHost(params.website);
+  if (!name || (!address && !host)) return null;
+
+  const { rows } = await query<LeadRow>(
+    `SELECT * FROM leads
+     WHERE regexp_replace(lower(coalesce(company,'')), '[^a-z0-9]+', '', 'g') = $1
+       AND (
+         ($2::text IS NOT NULL
+           AND regexp_replace(lower(coalesce(meta->'prospect'->>'address','')), '[^a-z0-9]+', '', 'g') = $2)
+         OR ($3::text IS NOT NULL
+           AND lower(coalesce(meta->'prospect'->>'website','')) LIKE '%' || $3 || '%')
+       )
+     ORDER BY first_seen ASC
+     LIMIT 1`,
+    [name, address, host],
+  );
+  return rows[0] ? toLead(rows[0]) : null;
+}
+
 export async function listProspects(limit = 100): Promise<LeadRecord[]> {
   const { rows } = await query<LeadRow>(
     `SELECT * FROM leads WHERE kind = 'prospect'
@@ -195,6 +303,7 @@ export async function listOutreachCandidates(params: {
     `SELECT * FROM leads
      WHERE kind = 'prospect'
        AND opt_out = false
+       AND readiness = 'scouted_ready'
        AND outreach_status IN ('pending','follow_up')
        AND outreach_attempts < $1
        AND (next_follow_up_at IS NULL OR next_follow_up_at <= now())
@@ -259,6 +368,37 @@ export async function setOptOut(leadId: string): Promise<void> {
      WHERE id = $1`,
     [leadId],
   );
+}
+
+/** Set status kesiapan lead (gate Sales/outreach). */
+export async function setLeadReadiness(leadId: string, readiness: string): Promise<void> {
+  await query(`UPDATE leads SET readiness = $2, last_seen = now() WHERE id = $1`, [
+    leadId,
+    readiness,
+  ]);
+}
+
+/* ─────────────────────────── meeting notes ───────────────────────── */
+
+export async function saveMeetingNote(params: {
+  leadId?: string | null;
+  projectId?: string | null;
+  content: string;
+}): Promise<string> {
+  const id = randomUUID();
+  await query(
+    `INSERT INTO meeting_notes (id, lead_id, project_id, content) VALUES ($1,$2,$3,$4)`,
+    [id, params.leadId ?? null, params.projectId ?? null, params.content],
+  );
+  return id;
+}
+
+export async function getLatestMeetingNote(leadId: string): Promise<string | null> {
+  const { rows } = await query<{ content: string }>(
+    `SELECT content FROM meeting_notes WHERE lead_id = $1 ORDER BY created_at DESC LIMIT 1`,
+    [leadId],
+  );
+  return rows[0]?.content ?? null;
 }
 
 export interface OutreachLogRow {
@@ -650,4 +790,124 @@ export async function getMetrics(): Promise<Metrics> {
     leadsByDay: dailyRes.rows,
     recentEvaluations,
   };
+}
+
+/* ─────────────────────────── research reports ─────────────────────── */
+
+interface ResearchReportRow {
+  id: string;
+  title: string;
+  objective: string;
+  status: string;
+  format: string;
+  language: string | null;
+  workspace: string | null;
+  summary: string | null;
+  quality: number | null;
+  iterations: number;
+  source_count: number;
+  fact_count: number;
+  brief: ResearchBrief | null;
+  report_path: string | null;
+  error: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+const toResearchRecord = (r: ResearchReportRow): ResearchReportRecord => ({
+  id: r.id,
+  title: r.title,
+  objective: r.objective,
+  status: r.status,
+  format: (r.format as ResearchReportRecord["format"]) ?? "markdown",
+  language: r.language,
+  workspace: r.workspace,
+  summary: r.summary,
+  quality: r.quality,
+  iterations: r.iterations,
+  sourceCount: r.source_count,
+  factCount: r.fact_count,
+  brief: r.brief ?? ({} as ResearchBrief),
+  reportPath: r.report_path,
+  error: r.error,
+  createdAt: r.created_at.toISOString(),
+  updatedAt: r.updated_at.toISOString(),
+});
+
+export async function createResearchReport(params: {
+  id: string;
+  brief: ResearchBrief;
+  workspace: string;
+}): Promise<void> {
+  await query(
+    `INSERT INTO research_reports (id, title, objective, status, format, language, workspace, brief)
+     VALUES ($1,$2,$3,'running',$4,$5,$6,$7::jsonb)`,
+    [
+      params.id,
+      params.brief.title,
+      params.brief.objective,
+      params.brief.format,
+      params.brief.language,
+      params.workspace,
+      JSON.stringify(params.brief),
+    ],
+  );
+}
+
+export async function updateResearchReport(params: {
+  id: string;
+  status?: "running" | "completed" | "failed";
+  summary?: string | null;
+  quality?: number | null;
+  iterations?: number;
+  sourceCount?: number;
+  factCount?: number;
+  reportPath?: string | null;
+  error?: string | null;
+}): Promise<void> {
+  await query(
+    `UPDATE research_reports SET
+       status       = COALESCE($2, status),
+       summary      = COALESCE($3, summary),
+       quality      = COALESCE($4, quality),
+       iterations   = COALESCE($5, iterations),
+       source_count = COALESCE($6, source_count),
+       fact_count   = COALESCE($7, fact_count),
+       report_path  = COALESCE($8, report_path),
+       error        = COALESCE($9, error),
+       updated_at   = now()
+     WHERE id = $1`,
+    [
+      params.id,
+      params.status ?? null,
+      params.summary ?? null,
+      params.quality ?? null,
+      params.iterations ?? null,
+      params.sourceCount ?? null,
+      params.factCount ?? null,
+      params.reportPath ?? null,
+      params.error ?? null,
+    ],
+  );
+}
+
+export async function getResearchReport(
+  id: string,
+): Promise<ResearchReportRecord | null> {
+  const { rows } = await query<ResearchReportRow>(
+    `SELECT * FROM research_reports WHERE id = $1`,
+    [id],
+  );
+  return rows[0] ? toResearchRecord(rows[0]) : null;
+}
+
+export async function listResearchReports(
+  limit = 50,
+  offset = 0,
+): Promise<ResearchReportRecord[]> {
+  const { rows } = await query<ResearchReportRow>(
+    `SELECT * FROM research_reports ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
+    [limit, offset],
+  );
+  return rows.map(toResearchRecord);
 }

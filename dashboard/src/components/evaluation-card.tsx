@@ -27,8 +27,8 @@ export function EvaluationCard({ item }: { item: EvaluationItem }) {
   const improvements = toStringList(e.improvements);
 
   return (
-    <article className="rounded-lg border bg-card">
-      <header className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b px-4 py-2.5">
+    <article className="min-w-0 rounded-xl border bg-card">
+      <header className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b px-4 py-4 sm:px-6">
         <span className="font-mono text-sm tabular-nums">
           {e.overall != null ? e.overall.toFixed(1) : "—"}
           <span className="text-muted-foreground">/10</span>
@@ -36,12 +36,12 @@ export function EvaluationCard({ item }: { item: EvaluationItem }) {
         <span className="text-xs text-muted-foreground">
           {formatDateTime(item.createdAt)}
         </span>
-        <span className="ml-auto font-mono text-[11px] text-muted-foreground">
+        <span className="min-w-0 font-mono text-[11px] text-muted-foreground [overflow-wrap:anywhere] sm:ml-auto">
           {item.threadId.replace(/^wa:/, "").replace(/@s\.whatsapp\.net$/, "")}
         </span>
       </header>
 
-      <div className="grid gap-x-6 gap-y-3 px-4 py-3.5 sm:grid-cols-2">
+      <div className="grid gap-x-6 gap-y-4 px-4 py-4 sm:grid-cols-2 sm:px-6">
         <Score10 value={e.relevance ?? 0} label="Relevansi" />
         <Score10 value={e.groundedness ?? 0} label="Grounded pada konteks" />
         <Score10 value={e.tone ?? 0} label="Nada & bahasa" />
@@ -49,13 +49,13 @@ export function EvaluationCard({ item }: { item: EvaluationItem }) {
       </div>
 
       {e.critique ? (
-        <p className="border-t px-4 py-3.5 text-sm leading-relaxed text-muted-foreground">
+        <p className="break-words border-t px-4 py-4 text-sm leading-6 text-muted-foreground sm:px-6">
           {e.critique}
         </p>
       ) : null}
 
       {strengths.length || improvements.length ? (
-        <div className="grid gap-4 border-t px-4 py-3.5 sm:grid-cols-2">
+        <div className="grid gap-4 border-t px-4 py-4 sm:grid-cols-2 sm:px-6">
           {strengths.length ? (
             <div>
               <p className="mb-2 flex items-center gap-1.5 text-xs font-medium">

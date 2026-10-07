@@ -1,0 +1,295 @@
+- generic [ref=f4e1]:
+  - generic [ref=f4e2]:
+    - complementary [ref=f4e3]:
+      - button "Pilih workspace" [ref=f4e5]:
+        - generic [ref=f4e11]:
+          - generic [ref=f4e12]: Workspace
+          - generic [ref=f4e13]: AI Automation
+      - navigation [ref=f4e16]:
+        - paragraph [ref=f4e17]: Utama
+        - link "Ringkasan" [ref=f4e18] [cursor=pointer]:
+          - /url: /
+        - link "Alur Operasional" [active] [ref=f4e24] [cursor=pointer]:
+          - /url: /operasional
+        - link "Approval 4" [ref=f4e153] [cursor=pointer]:
+          - /url: /approvals
+          - generic [ref=f4e34]: Approval
+          - generic [ref=f4e154]: "4"
+        - link "Tiket" [ref=f4e35] [cursor=pointer]:
+          - /url: /tickets
+        - button "Agent 14" [ref=f4e155]:
+          - generic [ref=f4e42]: Agent
+          - generic [ref=f4e43]: "14"
+        - button "Data & Operasi" [ref=f4e46]
+        - link "Pengaturan" [ref=f4e51] [cursor=pointer]:
+          - /url: /pengaturan
+      - generic [ref=f4e56]:
+        - generic [ref=f4e156]:
+          - generic [ref=f4e160]: API terhubung
+          - generic [ref=f4e161]: deepseek-chat
+        - generic [ref=f4e162]:
+          - generic [ref=f4e163]: baileys
+          - generic [ref=f4e164]: live send
+          - generic "http://localhost:4000" [ref=f4e165]: emb:hash
+    - main [ref=f4e59]:
+      - generic [ref=f4e199]:
+        - generic [ref=f4e200]:
+          - heading "Alur Operasional" [level=1] [ref=f4e201]
+          - paragraph [ref=f4e202]: Pantau handoff lintas divisi dari akuisisi, deal desk, delivery, hingga layanan klien—tanpa kehilangan konteks penting.
+        - generic [ref=f4e203]:
+          - link "Workflow Sales" [ref=f4e204] [cursor=pointer]:
+            - /url: /workflow
+          - button "Aktifkan tema gelap" [ref=f4e205]
+      - generic [ref=f4e207]:
+        - generic [ref=f4e208]:
+          - generic [ref=f4e209]:
+            - paragraph [ref=f4e211]: Agent aktif
+            - paragraph [ref=f4e214]: "3"
+            - paragraph [ref=f4e215]: 0 bekerja · 3 antre
+          - generic [ref=f4e216]:
+            - paragraph [ref=f4e218]: Perlu perhatian
+            - paragraph [ref=f4e221]: "5"
+            - paragraph [ref=f4e222]: 1 error · 4 approval
+          - generic [ref=f4e223]:
+            - paragraph [ref=f4e225]: Job selesai
+            - paragraph [ref=f4e229]: "9"
+            - paragraph [ref=f4e230]: seluruh divisi
+          - generic [ref=f4e231]:
+            - paragraph [ref=f4e233]: Cakupan
+            - paragraph [ref=f4e238]: "6"
+            - paragraph [ref=f4e239]: 14 agent operasional
+        - generic [ref=f4e240]:
+          - generic [ref=f4e241]:
+            - generic [ref=f4e242]:
+              - generic [ref=f4e246]: "Interaksi owner hanya di:"
+              - generic [ref=f4e247]: Preview
+              - generic [ref=f4e248]: Approval
+              - generic [ref=f4e249]: Emergency
+            - paragraph [ref=f4e255]: Supervisor meninjau sistem; chat klien tetap langsung ke Sales.
+          - generic [ref=f4e256]:
+            - textbox "Cari dalam alur operasional" [ref=f4e258]:
+              - /placeholder: Cari agent, divisi, atau peran…
+            - generic [ref=f4e259]:
+              - button "Semua 14" [pressed] [ref=f4e260]:
+                - text: Semua
+                - generic [ref=f4e261]: "14"
+              - button "Aktif 3" [ref=f4e262]:
+                - text: Aktif
+                - generic [ref=f4e263]: "3"
+              - button "Perhatian 3" [ref=f4e264]:
+                - text: Perhatian
+                - generic [ref=f4e265]: "3"
+              - button "Siap 10" [ref=f4e266]:
+                - text: Siap
+                - generic [ref=f4e267]: "10"
+            - button "Segarkan" [ref=f4e268]
+          - application [ref=f4e270]:
+            - generic [ref=f4e272]:
+              - generic:
+                - generic:
+                  - img:
+                    - group "Edge from D1 to D2" [ref=f4e273] [cursor=pointer]:
+                      - generic [ref=f4e274]: QUALIFY / booking
+                  - img:
+                    - group "Edge from D2 to D3" [ref=f4e276] [cursor=pointer]:
+                      - generic [ref=f4e279]: DP lunas → Preview → BUILT
+                  - img:
+                    - group "Edge from D3 to D4" [ref=f4e281] [cursor=pointer]:
+                      - generic [ref=f4e284]: QA lulus → Docs siap
+                  - img:
+                    - group "Edge from D4 to D5" [ref=f4e286] [cursor=pointer]:
+                      - generic [ref=f4e289]: Pelunasan final
+                  - img:
+                    - group "Edge from D0 to D3" [ref=f4e291] [cursor=pointer]:
+                      - generic [ref=f4e292]: Pantau & koreksi
+                  - img:
+                    - group "Edge from D5 to D1" [ref=f4e294] [cursor=pointer]:
+                      - generic [ref=f4e297]: Knowledge → pertumbuhan berikutnya
+                - generic:
+                  - group [ref=f4e299] [cursor=pointer]:
+                    - article [ref=f4e300]:
+                      - generic [ref=f4e306]:
+                        - generic [ref=f4e312]:
+                          - generic [ref=f4e313]:
+                            - paragraph [ref=f4e314]: Pengawasan
+                            - generic [ref=f4e315]: D0
+                          - heading "Command Center" [level=3] [ref=f4e316]
+                        - paragraph [ref=f4e317]: Tinjau anomali dan briefing; tidak merutekan chat
+                        - generic [ref=f4e318]:
+                          - generic [ref=f4e319]: Dalam antrean
+                          - generic [ref=f4e322]: 1 job aktif
+                      - button "Supervisor Push Jejak seluruh agent → laporan harian & anomali 1 job" [ref=f4e324]:
+                        - generic [ref=f4e327]:
+                          - generic [ref=f4e328]:
+                            - generic [ref=f4e329]: Supervisor
+                            - generic [ref=f4e330]: Push
+                          - generic [ref=f4e331]: Jejak seluruh agent → laporan harian & anomali
+                        - generic [ref=f4e332]: 1 job
+                  - group [ref=f4e333] [cursor=pointer]:
+                    - article [ref=f4e334]:
+                      - generic [ref=f4e340]:
+                        - generic [ref=f4e350]:
+                          - generic [ref=f4e351]:
+                            - paragraph [ref=f4e352]: 01 · Akuisisi
+                            - generic [ref=f4e353]: D1
+                          - heading "Growth & Acquisition" [level=3] [ref=f4e354]
+                        - paragraph [ref=f4e355]: Prospek lolos gate; Sales menjadi kanal klien
+                        - generic [ref=f4e356]:
+                          - generic [ref=f4e357]: Dalam antrean
+                          - generic [ref=f4e360]: 2 job aktif
+                      - generic [ref=f4e361]:
+                        - button "Research Prospecting Push Niche + kota → prospek berstatus discovered 1 job" [ref=f4e362]:
+                          - generic [ref=f4e365]:
+                            - generic [ref=f4e366]:
+                              - generic [ref=f4e367]: Research Prospecting
+                              - generic [ref=f4e368]: Push
+                            - generic [ref=f4e369]: Niche + kota → prospek berstatus discovered
+                          - generic [ref=f4e370]: 1 job
+                        - button "Scout (Pain-Point) Gate Prospek + situs + knowledge → pain-point & scouted_ready 1 job" [ref=f4e371]:
+                          - generic [ref=f4e374]:
+                            - generic [ref=f4e375]:
+                              - generic [ref=f4e376]: Scout (Pain-Point)
+                              - generic [ref=f4e377]: Gate
+                            - generic [ref=f4e378]: Prospek + situs + knowledge → pain-point & scouted_ready
+                          - generic [ref=f4e379]: 1 job
+                        - button "Sales (Nadia) Turn-based Chat WhatsApp → kualifikasi, booking, dan jalur demo/meeting Siap" [ref=f4e380]:
+                          - generic [ref=f4e383]:
+                            - generic [ref=f4e384]:
+                              - generic [ref=f4e385]: Sales (Nadia)
+                              - generic [ref=f4e386]: Turn-based
+                            - generic [ref=f4e387]: Chat WhatsApp → kualifikasi, booking, dan jalur demo/meeting
+                          - generic [ref=f4e388]: Siap
+                  - group [ref=f4e389] [cursor=pointer]:
+                    - article [ref=f4e390]:
+                      - generic [ref=f4e396]:
+                        - generic [ref=f4e403]:
+                          - generic [ref=f4e404]:
+                            - paragraph [ref=f4e405]: 02 · Deal desk
+                            - generic [ref=f4e406]: D2
+                          - heading "Deal Desk" [level=3] [ref=f4e407]
+                        - paragraph [ref=f4e408]: PRD, legal, DP, dan akses siap untuk preview
+                        - generic [ref=f4e409]: Siap
+                      - generic [ref=f4e413]:
+                        - button "Scoper & PRD Pull Transkrip chat/meeting → PRD proyek Siap" [ref=f4e414]:
+                          - generic [ref=f4e417]:
+                            - generic [ref=f4e418]:
+                              - generic [ref=f4e419]: Scoper & PRD
+                              - generic [ref=f4e420]: Pull
+                            - generic [ref=f4e421]: Transkrip chat/meeting → PRD proyek
+                          - generic [ref=f4e422]: Siap
+                        - button "Legal & Finance Pull PRD + data klien → SPK, NDA, dan invoice DP Siap" [ref=f4e423]:
+                          - generic [ref=f4e426]:
+                            - generic [ref=f4e427]:
+                              - generic [ref=f4e428]: Legal & Finance
+                              - generic [ref=f4e429]: Pull
+                            - generic [ref=f4e430]: PRD + data klien → SPK, NDA, dan invoice DP
+                          - generic [ref=f4e431]: Siap
+                        - button "Intake & Credential Pull PRD → link aman → kredensial terenkripsi → preview Siap" [ref=f4e432]:
+                          - generic [ref=f4e435]:
+                            - generic [ref=f4e436]:
+                              - generic [ref=f4e437]: Intake & Credential
+                              - generic [ref=f4e438]: Pull
+                            - generic [ref=f4e439]: PRD → link aman → kredensial terenkripsi → preview
+                          - generic [ref=f4e440]: Siap
+                  - group [ref=f4e441] [cursor=pointer]:
+                    - article [ref=f4e442]:
+                      - generic [ref=f4e448]:
+                        - generic [ref=f4e454]:
+                          - generic [ref=f4e455]:
+                            - paragraph [ref=f4e456]: 03 · Delivery
+                            - generic [ref=f4e457]: D3
+                          - heading "Delivery & Quality" [level=3] [ref=f4e458]
+                        - paragraph [ref=f4e459]: QA setelah BUILT; dokumentasi menaikkan ke done
+                        - generic [ref=f4e460]: Bermasalah
+                      - generic [ref=f4e464]:
+                        - button "QA & Guardrail Gate done_review → pengujian → laporan QA 1 done" [ref=f4e465]:
+                          - generic [ref=f4e468]:
+                            - generic [ref=f4e469]:
+                              - generic [ref=f4e470]: QA & Guardrail
+                              - generic [ref=f4e471]: Gate
+                            - generic [ref=f4e472]: done_review → pengujian → laporan QA
+                          - generic [ref=f4e473]: 1 done
+                        - button "Documentation & SOP Gate PRD + QA lulus → SOP & panduan → done 1 done" [ref=f4e474]:
+                          - generic [ref=f4e477]:
+                            - generic [ref=f4e478]:
+                              - generic [ref=f4e479]: Documentation & SOP
+                              - generic [ref=f4e480]: Gate
+                            - generic [ref=f4e481]: PRD + QA lulus → SOP & panduan → done
+                          - generic [ref=f4e482]: 1 done
+                  - group [ref=f4e483] [cursor=pointer]:
+                    - article [ref=f4e484]:
+                      - generic [ref=f4e490]:
+                        - generic [ref=f4e495]:
+                          - generic [ref=f4e496]:
+                            - paragraph [ref=f4e497]: 04 · Layanan klien
+                            - generic [ref=f4e498]: D4
+                          - heading "Client Success" [level=3] [ref=f4e499]
+                        - paragraph [ref=f4e500]: Handover, support via Sales, monitor, dan retensi
+                        - generic [ref=f4e501]:
+                          - generic [ref=f4e502]: Siap
+                          - generic [ref=f4e505]: 4 approval
+                      - generic [ref=f4e506]:
+                        - button "Handover & Final Invoice Push Proyek done → BAST + invoice pelunasan 2 done" [ref=f4e507]:
+                          - generic [ref=f4e510]:
+                            - generic [ref=f4e511]:
+                              - generic [ref=f4e512]: Handover & Final Invoice
+                              - generic [ref=f4e513]: Push
+                            - generic [ref=f4e514]: Proyek done → BAST + invoice pelunasan
+                          - generic [ref=f4e515]: 2 done
+                        - button "L1 Support & Triage Turn-based Keluhan → jawaban dari SOP / tiket / eskalasi Siap" [ref=f4e516]:
+                          - generic [ref=f4e519]:
+                            - generic [ref=f4e520]:
+                              - generic [ref=f4e521]: L1 Support & Triage
+                              - generic [ref=f4e522]: Turn-based
+                            - generic [ref=f4e523]: Keluhan → jawaban dari SOP / tiket / eskalasi
+                          - generic [ref=f4e524]: Siap
+                        - button "Infra & Cost Monitor Push Metrik infra & biaya → monitor.alert Siap" [ref=f4e525]:
+                          - generic [ref=f4e528]:
+                            - generic [ref=f4e529]:
+                              - generic [ref=f4e530]: Infra & Cost Monitor
+                              - generic [ref=f4e531]: Push
+                            - generic [ref=f4e532]: Metrik infra & biaya → monitor.alert
+                          - generic [ref=f4e533]: Siap
+                        - button "Retainer & Upsell Push Pelunasan + pemakaian → draf retainer / upsell Siap" [ref=f4e534]:
+                          - generic [ref=f4e537]:
+                            - generic [ref=f4e538]:
+                              - generic [ref=f4e539]: Retainer & Upsell
+                              - generic [ref=f4e540]: Push
+                            - generic [ref=f4e541]: Pelunasan + pemakaian → draf retainer / upsell
+                          - generic [ref=f4e542]: Siap
+                  - group [ref=f4e543] [cursor=pointer]:
+                    - article [ref=f4e544]:
+                      - generic [ref=f4e550]:
+                        - generic [ref=f4e556]:
+                          - generic [ref=f4e557]:
+                            - paragraph [ref=f4e558]: 05 · Flywheel
+                            - generic [ref=f4e559]: D5
+                          - heading "Brand & Flywheel" [level=3] [ref=f4e560]
+                        - paragraph [ref=f4e561]: Studi kasus mengisi knowledge untuk Sales & Scout
+                        - generic [ref=f4e562]: Siap
+                      - button "Case Study & Content Push Hasil proyek → studi kasus anonim → knowledge base Siap" [ref=f4e567]:
+                        - generic [ref=f4e570]:
+                          - generic [ref=f4e571]:
+                            - generic [ref=f4e572]: Case Study & Content
+                            - generic [ref=f4e573]: Push
+                          - generic [ref=f4e574]: Hasil proyek → studi kasus anonim → knowledge base
+                        - generic [ref=f4e575]: Siap
+            - generic "Control Panel" [ref=f4e576]:
+              - button "Zoom In" [ref=f4e577] [cursor=pointer]
+              - button "Zoom Out" [ref=f4e580] [cursor=pointer]
+              - button "Fit View" [ref=f4e583] [cursor=pointer]
+            - img "Mini Map" [ref=f4e587]
+            - generic [ref=f4e589]:
+              - paragraph [ref=f4e590]: Cara membaca
+              - generic [ref=f4e591]:
+                - generic [ref=f4e592]: "Garis penuh: handoff utama"
+                - generic [ref=f4e593]: "Garis putus: pengawasan / flywheel"
+                - generic [ref=f4e594]: "Klik agent: buka detail"
+          - generic [ref=f4e596]:
+            - generic [ref=f4e597]: Bermasalah
+            - generic [ref=f4e600]: Bekerja
+            - generic [ref=f4e603]: Dalam antrean
+            - generic [ref=f4e606]: Siap
+            - generic [ref=f4e609]: Nonaktif
+            - generic [ref=f4e612]: Status diperbarui otomatis dari orchestrator.
+  - alert [ref=f4e152]

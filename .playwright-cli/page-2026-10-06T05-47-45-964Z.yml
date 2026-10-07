@@ -1,0 +1,6 @@
+- generic [active] [ref=f212e1]:
+  - generic [ref=f212e2]:
+    - complementary [ref=f212e3]
+    - main [ref=f212e5]:
+      - heading "Workflow bisnis" [level=1] [ref=f212e9]
+  - button "Open Next.js Dev Tools" [ref=f212e17] [cursor=pointer]

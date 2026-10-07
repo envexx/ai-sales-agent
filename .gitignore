@@ -5,6 +5,7 @@ dist/
 *.log
 npm-debug.log*
 baileys_auth/
+baileys_auth*
 .auth/
 sessions/
 .DS_Store
@@ -18,4 +19,11 @@ dashboard/.backups/
 
 # design tooling
 .impeccable/
+
+
+# pm2 logs
+logs/
+
+# research outputs (laporan + evidence file)
+workspace/
 

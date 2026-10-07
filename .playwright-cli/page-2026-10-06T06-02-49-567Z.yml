@@ -1,0 +1,52 @@
+- generic [active] [ref=f220e1]:
+  - generic [ref=f220e3]:
+    - banner [ref=f220e4]:
+      - link "Agent Company" [ref=f220e5] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f220e11]: Menghubungkan…
+    - main [ref=f220e14]:
+      - navigation [ref=f220e15]:
+        - link "Kanban" [ref=f220e16] [cursor=pointer]:
+          - /url: /
+        - link "Alur" [ref=f220e21] [cursor=pointer]:
+          - /url: /workflow
+        - link "Approval" [ref=f220e26] [cursor=pointer]:
+          - /url: /approvals
+        - link "Tiket" [ref=f220e30] [cursor=pointer]:
+          - /url: /tickets
+        - link "Leads" [ref=f220e34] [cursor=pointer]:
+          - /url: /leads
+        - link "Proyek" [ref=f220e39] [cursor=pointer]:
+          - /url: /projects
+        - link "Aktivitas" [ref=f220e42] [cursor=pointer]:
+          - /url: /pipeline
+        - link "Invoice" [ref=f220e45] [cursor=pointer]:
+          - /url: /invoices
+        - link "Booking" [ref=f220e48] [cursor=pointer]:
+          - /url: /booking
+        - link "Kualitas" [ref=f220e53] [cursor=pointer]:
+          - /url: /kualitas
+        - link "Knowledge" [ref=f220e57] [cursor=pointer]:
+          - /url: /knowledge
+        - link "Pengaturan" [ref=f220e60] [cursor=pointer]:
+          - /url: /pengaturan
+        - link "Claw3D ↗" [ref=f220e64] [cursor=pointer]:
+          - /url: http://localhost:3000/office
+      - generic [ref=f220e69]:
+        - generic [ref=f220e70]:
+          - heading "Proyek" [level=1] [ref=f220e71]
+          - paragraph [ref=f220e72]: Satu folder untuk konteks, dokumen, dan perjalanan setiap proyek.
+        - button "Aktifkan tema gelap" [ref=f220e74]
+      - generic [ref=f220e76]:
+        - generic [ref=f220e77]:
+          - textbox "Cari folder proyek" [ref=f220e82]:
+            - /placeholder: Cari proyek…
+          - generic [ref=f220e83]:
+            - button "Semua" [pressed] [ref=f220e84]
+            - button "Aktif" [ref=f220e85]
+            - button "Diserahkan" [ref=f220e86]
+        - region "Folder proyek" [ref=f220e87]:
+          - generic [ref=f220e88]:
+            - heading "Folder proyek" [level=2] [ref=f220e89]
+            - generic [ref=f220e90]: "0"
+  - button "Open Next.js Dev Tools" [ref=f220e97] [cursor=pointer]

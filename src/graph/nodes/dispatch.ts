@@ -1,18 +1,16 @@
-import { env } from "../../config/env.js";
 import { loggerFor } from "../../config/logger.js";
-import { logConversation } from "../../repository/index.js";
-import { getTransport } from "../../whatsapp/index.js";
+import { sendOutbound } from "../../whatsapp/outbound.js";
 import type { SalesStateType, SalesUpdateType } from "../state.js";
 import { traceEntry } from "./helpers.js";
 
 const log = loggerFor("node:dispatch");
 
 /**
- * Send the generated reply over WhatsApp.
+ * Kirim balasan Sales ke WhatsApp.
  *
- * Safety: when DRY_RUN=true nothing is actually sent, but the outbound message
- * is still recorded so the transcript stays coherent. If the graph re-enters
- * through the reflection loop, dispatch is skipped to avoid double-sending.
+ * Safety: saat `DRY_RUN=true` pesan tidak dikirim tetapi tetap dicatat. Bila
+ * graph masuk kembali lewat reflection loop, dispatch dilewati agar tidak
+ * mengirim dua kali.
  */
 export async function dispatchNode(state: SalesStateType): Promise<SalesUpdateType> {
   if (state.dispatched) {
@@ -29,31 +27,20 @@ export async function dispatchNode(state: SalesStateType): Promise<SalesUpdateTy
   }
 
   try {
-    let messageId: string | null = null;
-
-    if (env.DRY_RUN) {
-      log.info({ to: state.waJid }, "DRY_RUN active — message not sent");
-    } else {
-      const transport = getTransport();
-      const sent = await transport.sendText(state.waJid, text);
-      messageId = sent.id;
-    }
-
-    await logConversation({
+    const { messageId } = await sendOutbound({
+      waJid: state.waJid,
+      text,
       leadId: state.leadId,
       threadId: state.threadId,
-      role: "assistant",
-      direction: "outbound",
-      content: text,
-      meta: { dryRun: env.DRY_RUN, messageId },
     });
 
     return {
       dispatched: true,
       dispatchMessageId: messageId,
-      trace: [traceEntry("dispatch", { dryRun: env.DRY_RUN, messageId })],
+      trace: [traceEntry("dispatch", { dryRun: messageId === null, messageId })],
     };
   } catch (err) {
+    log.error({ err: (err as Error).message }, "dispatch failed");
     return {
       dispatched: false,
       errors: [`dispatch: ${(err as Error).message}`],

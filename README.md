@@ -22,15 +22,30 @@ panjang pesan.
 
 ## Fitur utama
 
+- **Agent Supervisor (orchestrator)** — memilih agent worker untuk setiap pesan masuk (Sales & Research); menambah agent baru cukup 1 node + 1 cabang routing
+- **Business pipeline (F0)** — orkestrasi event/jadwal: job queue + scheduler, event log, notifikasi owner, approval human-in-the-loop, dan Daily Briefing ([`docs/PIPELINE-F0.md`](docs/PIPELINE-F0.md))
+- **Alur bisnis multi-agent** — acuan resmi peran & gate tiap agent (supervisor = peninjau, Sales = pusat pipeline): [`docs/FLOW.md`](docs/FLOW.md)
+- **Research Agent (Universal Research Engine)** — pipeline riset reusable ber-loop: planner → dual-engine ingestion (Firecrawl + Camoufox) → ekstraksi fakta → evaluator kedalaman → formatter schema-driven; laporan & evidence tersimpan sebagai file
+- **Research Prospecting (D1)** — cari prospek bisnis via **Google Maps (scraping)** dengan **targeting** niche "siap-AI/low-tech" (bisnis yang butuh otomasi tapi jarang memakainya; bisnis teknologi dikecualikan), lengkapi kontak (telepon/website) dengan bantuan **Tavily** (search + extract), simpan ke `leads` + antrean outreach; **Scout** menyusun pain-point & sudut pendekatan ([`docs/PROSPECTING.md`](docs/PROSPECTING.md))
+- **Scoper & PRD Builder (F2)** — dari transkrip Sales menghasilkan **PRD** (alur, webhook/API, struktur DB) + checklist teknis, tersimpan di `projects` + file ([`docs/SCOPER.md`](docs/SCOPER.md))
+- **Legal & Finance (F2)** — dari PRD menghasilkan draf **SPK + NDA + invoice DP**, mencatat invoice, dan memverifikasi pembayaran DP ([`docs/LEGAL.md`](docs/LEGAL.md))
+- **Agent F3–F5** — Intake & Credential (vault terenkripsi), QA & Guardrail, Documentation/SOP, Handover & Final Invoice, L1 Support, Infra Monitor, Retainer & Upsell, Case Study ([`docs/AGENTS.md`](docs/AGENTS.md))
+- **Flywheel tertutup** — studi kasus otomatis masuk **knowledge base** dan dipakai ulang oleh Sales (RAG) & Scout (bukti sosial) untuk prospek berikutnya
+- **Rantai otomatis** — research & scout → scoper → legal → intake → QA & docs → handover → developer/content, plus briefing + monitor harian
+- **LLM multi-provider** — DeepSeek / Antigravity / **OpenRouter** (model gratis) dengan rantai fallback terpusat ([`docs/LLM-PROVIDERS.md`](docs/LLM-PROVIDERS.md))
+- **Kanban bisnis live** — proses yang sedang berjalan (termasuk riset prospek) tampil di kanban begitu dimulai, lengkap dengan **progres** (tahap & hitungan), tanpa menunggu selesai
 - **LangGraph state machine** — 14 node dengan checkpointer Postgres (memori percakapan lintas-turn)
 - **Triage bot vs manusia** — 11 pola regex heuristik, LLM fail-open
 - **RAG + long-term memory** — pgvector untuk knowledge base dan feedback loop refleksi
 - **Lead scoring 0–100** (heuristik + LLM) → segmen Nurture / Objection / Closing
 - **Balasan WhatsApp yang manusiawi** — typing indicator, jeda sesuai panjang teks, read receipt
+- **Media masuk dipahami** — **voice note** ditranskrip lokal (faster-whisper), **gambar** dideskripsikan (DeepSeek vision), lalu dibalas normal; hanya jalan saat diperlukan
+- **Anti balasan dobel** — pesan yang terkirim ulang di-dedup by id + diproses berurutan per kontak; **pesan identik berulang** dilewati
 - **Penjadwalan Cal.com via MCP** — cek slot kosong dan buat booking langsung
 - **Outreach otomatis** — hanya jam kerja, batch + jeda, opt-out otomatis saat prospek balas STOP
 - **Webhook lead** — 3 bentuk body, alias field ID/EN, validasi per-field → [`docs/WEBHOOK-LEADS.md`](docs/WEBHOOK-LEADS.md)
 - **Dashboard Next.js 16 + shadcn/ui** — 6 halaman, status WhatsApp live via SSE
+- **Office (Claw3D)** — control room visual: lihat semua agent bekerja live & **chat dengan supervisor/agent** lewat gateway adapter (`claw3d/server/business-gateway-adapter.js`)
 
 ## Tangkapan Layar
 
@@ -54,7 +69,9 @@ panjang pesan.
 
 ```mermaid
 flowchart TD
-    webhook["WhatsApp Webhook"] --> triage["AI Triage / Bot Detection"]
+    webhook["WhatsApp / API Turn"] --> supervisor["Supervisor Agent"]
+    supervisor -->|"agent: sales"| triage["AI Triage / Bot Detection"]
+    supervisor -->|"agent: research"| rpipeline["Research Engine (planner … formatter)"]
     triage -->|BOT| filter["Filter"]
     triage -->|HUMAN| rag["RAG"]
     rag --> scoring["Lead Scoring"]
@@ -71,6 +88,20 @@ flowchart TD
     reflection --> ltm["Long-Term Memory"]
     ltm -->|feedback| rag
 ```
+
+Semua pesan masuk lewat **Supervisor Agent** terlebih dahulu. Supervisor memilih
+agent worker yang tepat (saat ini hanya **Sales**), lalu worker menjalankan
+pipeline-nya sendiri. Detail: [`docs/SUPERVISOR.md`](docs/SUPERVISOR.md).
+
+### Node supervisor (orchestrator)
+
+| Node (LangGraph) | File | Peran |
+| --- | --- | --- |
+| `supervisor` | `src/supervisor/nodes/supervisor.ts` | Pilih agent (heuristik → LLM → default) untuk tiap turn |
+| `sales` (worker) | `src/supervisor/nodes/sales.ts` | Jalankan graph Sales lalu ringkas hasilnya untuk supervisor |
+| `prospecting` (worker) | `src/supervisor/nodes/prospecting.ts` | Research Prospecting (Maps) — chat menjadwalkan job, hasil dikirim ke owner |
+
+### Node graph Sales
 
 | Node (LangGraph) | File | Peran |
 | --- | --- | --- |
@@ -92,6 +123,34 @@ flowchart TD
 > diberi sufiks (`bookingFlow`, `critique`, `reflect`) sementara field state
 > tetap memakai nama semantiknya.
 
+### Research Agent — Universal Research Engine
+
+Worker kedua di bawah supervisor. Reusable: semua perilaku ditentukan sebuah
+**Research Brief** (topik, sub-pertanyaan, kedalaman, batas sumber, format,
+struktur bagian). Detail: [`docs/RESEARCH.md`](docs/RESEARCH.md).
+
+```mermaid
+flowchart TD
+    brief["Research Brief Config"] --> planner["1. Parameterized Planner"]
+    planner --> ingest["2. Dual-Engine Ingestion (Firecrawl + Camoufox)"]
+    ingest --> extract["3. Context Pruning & Fact Extraction"]
+    extract --> verify["4. Strict Gap/Depth Evaluator"]
+    verify -->|"depth < max & perlu data"| planner
+    verify -->|"selesai / cap limit"| formatter["5. Schema-Driven Formatter"]
+    formatter --> output["Laporan Sesuai Format Brief"]
+```
+
+| Node (LangGraph) | File | Peran |
+| --- | --- | --- |
+| `planner` | `src/research/nodes/planner.ts` | Pecah objective → tugas + query (parameterized) |
+| `ingest` | `src/research/nodes/ingest.ts` | Discovery + ambil halaman via Firecrawl, fallback Camoufox |
+| `extract` | `src/research/nodes/extract.ts` | Pangkas konteks + ekstrak fakta bersitasi |
+| `verify` | `src/research/nodes/verify.ts` | Nilai kedalaman/kualitas + daftar gap |
+| `formatter` | `src/research/nodes/format.ts` | Susun laporan sesuai struktur brief |
+
+Metadata laporan disimpan di tabel `research_reports`; laporan dan evidence
+disimpan sebagai file di `workspace/research/<reportId>/`.
+
 ## Stack
 
 - **Orkestrasi:** LangGraph.js `1.x` (`StateGraph`, `Annotation.Root`, checkpointer Postgres)
@@ -106,8 +165,8 @@ flowchart TD
 # 1. Install dependency
 npm install
 
-# 2. Nyalakan Postgres + pgvector
-docker compose up -d db
+# 2. Nyalakan Postgres + pgvector (+ proxy SearXNG untuk Research Agent)
+docker compose up -d
 
 # 3. Konfigurasi
 copy .env.example .env        # Windows
@@ -130,7 +189,7 @@ npm run sim                   # simulasi percakapan (transport=console, DRY_RUN=
 Server API:
 
 ```bash
-curl -X POST http://localhost:3000/simulate ^
+curl -X POST http://localhost:4000/simulate ^
   -H "content-type: application/json" ^
   -d "{\"from\":\"6281234567890\",\"name\":\"Dita\",\"text\":\"Berapa harga website?\"}"
 ```
@@ -190,11 +249,36 @@ tidak pernah terbuang.
 | `DEEPSEEK_BASE_URL` | `https://api.deepseek.com` | Base URL DeepSeek |
 | `DEEPSEEK_MODEL` | `deepseek-chat` | Model utama (mendukung tool calling) |
 | `DEEPSEEK_REASONING_MODEL` | `deepseek-reasoner` | Dipakai untuk critique/reflection bila `USE_REASONING_MODEL=true` |
+| `LLM_PROVIDER` | `deepseek` | Provider default: `deepseek` \| `antigravity` \| `openrouter` |
+| `LLM_PROVIDER_OVERRIDES` | – | Override per-node, mis. `SupervisorRoute=antigravity,ResearchPlan=antigravity` |
+| `LLM_FALLBACK_TO_DEEPSEEK` | `true` | Fallback otomatis ke DeepSeek bila provider utama gagal |
+| `LLM_FALLBACK_PROVIDERS` | – | Rantai fallback berlapis (urut), mis. `openrouter,deepseek` |
+| `ANTIGRAVITY_BIN` / `ANTIGRAVITY_MODEL` / `ANTIGRAVITY_EFFORT` | `agy` / – / `medium` | Antigravity CLI ([`docs/LLM-PROVIDERS.md`](docs/LLM-PROVIDERS.md)) |
+| `OPENROUTER_API_KEY` / `OPENROUTER_MODEL` | – / `nvidia/nemotron-3-ultra-550b-a55b:free` | OpenRouter (model gratis) sebagai provider/fallback |
+| `PIPELINE_ENABLED` / `PIPELINE_TICK_SECONDS` / `PIPELINE_BATCH` | `true` / `30` / `5` | Scheduler pipeline (F0) |
+| `OWNER_WA_JID` / `OWNER_NAME` | – / `Owner` | Nomor WhatsApp owner (notifikasi & perintah) |
+| `NOTIFY_ENABLED` | `true` | Aktifkan notifikasi owner |
+| `BRIEFING_ENABLED` / `BRIEFING_HOUR` / `BRIEFING_TIMEZONE` | `true` / `8` / `Asia/Jakarta` | Daily Briefing |
+| `APPROVAL_TTL_HOURS` / `APPROVAL_PREFIX` | `72` / `APV` | Approval human-in-the-loop |
+| `APP_SECRET` | – | Kunci enkripsi vault kredensial (F2) |
+| `PROSPECTING_ENABLED` / `PROSPECTING_DEFAULT_LIMIT` | `true` / `8` | Research Prospecting (D1) |
+| `PROSPECTING_ENRICH` / `PROSPECTING_WAIT_MS` | `true` / `6000` | Enrichment kontak & tunggu render Maps |
+| `PROSPECTING_TARGET_COUNT` / `PROSPECTING_EXCLUDE_TECH` | `3` / `true` | Mode tepat sasaran: jumlah niche dari katalog & kecualikan bisnis teknologi |
+| `PROSPECTING_DAILY_TARGET` / `PROSPECTING_NICHES_PER_ROUND` / `PROSPECTING_MAX_ROUNDS` | `20` / `3` / `8` | Target lead tersimpan/hari & ritme putaran (job harian mengelilingi katalog) |
+| `SCOPER_ENABLED` / `PROJECTS_WORKSPACE_DIR` | `true` / `./workspace/projects` | Scoper & PRD (F2) |
+| `LEGAL_ENABLED` / `LEGAL_DUE_DAYS` | `true` / `7` | Legal & Finance (F2) |
+| `INTAKE_ENABLED` · `QA_ENABLED` · `SCRIBE_ENABLED` · `HANDOVER_ENABLED` | `true` | Agent F2–F4 |
+| `SUPPORT_ENABLED` · `MONITOR_ENABLED` · `RETAINER_ENABLED` · `CONTENT_ENABLED` | `true` | Agent F4–F5 |
+| `MONITOR_MEMORY_MB` / `MONITOR_WEBHOOK_TIMEOUT_MS` | `1024` / `5000` | Ambang monitor |
+| `TELEGRAM_ENABLED` / `TELEGRAM_BOT_TOKEN` | `true` / – | Bot Telegram L1 Support (kanal klien) |
 | `DATABASE_URL` | `postgres://sales:sales@localhost:5432/sales` | Postgres |
 | `EMBEDDING_PROVIDER` | `hash` | `hash` \| `local` \| `openai` |
 | `EMBEDDING_DIM` | `384` | Harus cocok dengan `vector(384)` |
 | `WA_TRANSPORT` | `console` | `console` (dev) \| `baileys` |
 | `WA_AUTH_DIR` | `./baileys_auth` | Folder sesi Baileys |
+| `WA_SEND_CONNECT_TIMEOUT_MS` / `WA_SEND_RETRIES` / `WA_SEND_RETRY_MS` | `20000` / `3` / `3000` | Tunggu koneksi & coba ulang kirim balasan yang gagal |
+| `MEDIA_ENABLED` / `WHISPER_ENABLED` / `WHISPER_MODEL` | `true` / `true` / `small` | Voice note → transkrip lokal (faster-whisper) |
+| `VISION_ENABLED` / `VISION_MODEL` | `true` / – | Gambar → deskripsi (DeepSeek vision) |
 | `DRY_RUN` | `true` | `true` = tidak benar-benar mengirim pesan |
 | `WA_AUTO_CONNECT` | `true` | Sambungkan WhatsApp otomatis saat boot |
 | `WA_DEFAULT_COUNTRY_CODE` | `62` | Kode negara untuk normalisasi nomor lead |
@@ -208,6 +292,21 @@ tidak pernah terbuang.
 | `RAG_TOP_K` / `LTM_TOP_K` | `5` / `3` | Jumlah dokumen yang diambil |
 | `MAX_REFLECTION_LOOPS` | `0` | Batas loop LTM→RAG per turn |
 | `SCORE_THRESHOLD_LOW/HIGH` | `40` / `75` | Ambang band skor |
+| `SUPERVISOR_FORCE_LLM` | `false` | Paksa supervisor memakai LLM untuk routing walau agent baru satu |
+| `RESEARCH_ENABLED` | `true` | Aktifkan Research Agent |
+| `RESEARCH_WORKSPACE_DIR` | `./workspace/research` | Folder laporan + evidence (file) |
+| `RESEARCH_DEFAULT_DEPTH` / `RESEARCH_MAX_ITERATIONS` | `2` / `3` | Kedalaman & batas loop |
+| `RESEARCH_MAX_SOURCES` / `RESEARCH_MAX_FACTS` | `12` / `80` | Batas sumber & fakta |
+| `RESEARCH_TIME_BUDGET_MS` | `240000` | Batas waktu riset (ms) |
+| `RESEARCH_CHAT_ENABLED` / `RESEARCH_CHAT_MAX_ITERATIONS` | `true` / `1` | Batas riset via chat |
+| `FIRECRAWL_ENABLED` / `FIRECRAWL_BASE_URL` | `true` / `http://127.0.0.1:3002` | Engine ingestion #1 |
+| `FIRECRAWL_API_KEY` | – | Opsional (kosong = tanpa auth) |
+| `RESEARCH_SEARCH_PROVIDER` | `auto` | Discovery: `auto` \| `tavily` \| `searxng` \| `firecrawl` \| `bing` \| `camoufox` \| `none` |
+| `RESEARCH_SEARXNG_URL` | `http://127.0.0.1:8081` | Endpoint SearXNG (via `searxng-proxy`) |
+| `CAMOUFOX_ENABLED` / `CAMOUFOX_PYTHON` | `true` / `python` | Engine ingestion #2 (stealth browser) |
+| `TAVILY_ENABLED` / `TAVILY_API_KEY` | `true` / – | Tavily Search + Extract (discovery & enrichment tambahan) |
+| `TAVILY_SEARCH_DEPTH` / `TAVILY_EXTRACT_DEPTH` | `basic` | `basic` \| `advanced` |
+| `TAVILY_MAX_RESULTS` | `8` | Maksimum hasil per pencarian Tavily |
 | `BUSINESS_NAME` / `BUSINESS_DESCRIPTION` / `SALES_REP_NAME` / `BOOKING_LINK` | – | Konteks bisnis yang disuntikkan ke prompt |
 | `API_KEY` | – | Jika diisi, `/webhook/whatsapp` butuh header `x-api-key` |
 | `CAL_API_KEY` | – | API key Cal.com — mengaktifkan MCP scheduling |
@@ -227,6 +326,44 @@ tidak pernah terbuang.
 | `GET` | `/leads` | Daftar lead beserta skor & segmen |
 | `GET` | `/conversations/:threadId` | Transkrip percakapan |
 | `GET` | `/graph/mermaid` | Diagram arsitektur (Mermaid) |
+| `GET` | `/agents` | Daftar agent yang terdaftar di supervisor |
+| `GET` | `/supervisor/mermaid` | Diagram arsitektur supervisor (Mermaid) |
+| `GET` \| `POST` | `/supervisor/chat` | Riwayat / kirim pesan ke **Supervisor (penasihat)** |
+| `GET` \| `PUT` | `/supervisor/profile` | Profil & tujuan owner yang dibaca Supervisor |
+| `GET` | `/agents/growth` | KPI & tren pertumbuhan per agent |
+| `POST` | `/agents/optimize` | Jalankan loop usulan perbaikan agent |
+| `GET` | `/improvements` | Pelajaran & usulan perbaikan per agent |
+| `POST` | `/improvements/:id/approve` \| `/reject` | Putuskan usulan (approve → masuk Knowledge) |
+| `GET` | `/research/schema` | Skema body Research Brief |
+| `POST` | `/research` | Jalankan riset (body = brief) |
+| `GET` | `/research` | Daftar laporan riset |
+| `GET` | `/research/:id` | Detail metadata laporan |
+| `GET` | `/research/:id/report` | Isi laporan (markdown/JSON) |
+| `GET` | `/research/:id/evidence` | Daftar file evidence |
+| `GET` | `/research/mermaid` | Diagram engine riset (Mermaid) |
+| `POST` | `/prospecting` | Jalankan prospecting (body: `{ niche, location, limit? }`) |
+| `GET` | `/prospecting/niches` | Katalog niche target + vertikal teknologi yang dikecualikan |
+| `POST` | `/prospecting/targeted` | 1 putaran tepat sasaran (body: `{ location, count?, only?, limit?, queue? }`) |
+| `POST` | `/scoper` | Buat PRD dari transkrip (body: `{ leadId? / threadId?, title? }`) |
+| `GET` | `/projects` | Daftar proyek + PRD |
+| `POST` | `/legal` | Buat draf SPK/NDA + invoice DP (body: `{ projectId, amount }`) |
+| `GET` | `/invoices` | Daftar invoice |
+| `POST` | `/projects/:id/dp-paid` | Tandai DP proyek lunas |
+| `POST` | `/projects/:id/built` | Tandai sistem selesai dibangun → jalankan QA |
+| `POST` | `/intake/:projectId` · `GET\|POST` `/projects/:id/credentials` | Intake & vault kredensial |
+| `POST` | `/qa/:projectId` · `/scribe/:projectId` · `/handover/:projectId` | QA, Dokumentasi, Serah terima |
+| `POST` | `/support` · `GET` `/tickets` · `POST` `/monitor/check` | L1 support & pemantauan |
+| `GET` \| `POST` | `/channels` | Kanal klien (Telegram chat_id → proyek) |
+| `GET` | `/knowledge` | Knowledge base (filter `?source=case_study`) |
+| `GET` | `/agents` \| `/agents/status` | Registry agent & status live (dipakai navigasi dashboard) |
+| `POST` | `/developer/:projectId` (maintain) · `/developer/build` · `/developer/apply` · `/content/:projectId` | Developer (OpenCode) & studi kasus |
+| `GET` | `/pipeline/snapshot` | Ringkasan pipeline (data briefing) |
+| `GET` \| `POST` | `/pipeline/jobs` | Daftar / enqueue job |
+| `POST` | `/pipeline/tick` | Proses job jatuh tempo |
+| `GET` | `/pipeline/events` | Log event bisnis |
+| `POST` | `/briefing/run` | Jalankan Daily Briefing sekarang |
+| `GET` \| `POST` | `/approvals` | Daftar / minta persetujuan |
+| `POST` | `/approvals/:id/approve` \| `/reject` | Putuskan persetujuan |
 
 Contoh respons `/simulate`:
 
@@ -263,32 +400,67 @@ dengan **Next.js 16 + Tailwind v4 + shadcn/ui**, membaca REST API backend.
 
 ```bash
 # terminal 1 — backend
-npm run dev                  # http://localhost:3000
+npm run dev                  # http://localhost:4000
 
 # terminal 2 — dashboard
 npm run dashboard:dev        # http://localhost:3001
 ```
 
-Halaman:
+Dashboard kini **berpusat pada agent** (bukan sales): beranda = Control Room, dan
+setiap agent punya menu dropdown yang bisa dibuka untuk melihat ringkasan,
+aktivitas, dan data terkait. Status tiap agent dihitung dari job queue + event
+log (endpoint `GET /agents/status`).
 
 | Route | Isi |
 | --- | --- |
-| `/` | Statistik ringkas, **pipeline per segmen**, volume lead 14 hari, evaluasi terbaru |
-| `/leads` | Tabel lead dengan pencarian, filter segmen, dan pengurutan |
-| `/leads/[id]` | Detail lead: transkrip WhatsApp, skor, penilaian, dan booking |
-| `/kualitas` | Radar kualitas rata-rata + daftar kritik agen |
-| `/booking` | Kartu booking & follow-up |
+| `/` | **Control Room** — alur end-to-end, grid 12 agent (status live), "butuh tindakan Anda", aktivitas terbaru |
+| `/agents/[slug]` | **Detail agent** (supervisor, prospecting, sales, scoper, legal, intake, qa, handover, support, monitor, developer, content). Sales memuat tab **Kualitas / Booking / Workflow** |
+| `/leads` · `/leads/[id]` | Lead + detail percakapan (data agent Sales) |
+| `/projects` · `/invoices` | Proyek, PRD, dan invoice (Deal Desk) |
+| `/tickets` | Tiket dukungan L1 (agent Support) |
+| `/approvals` | Persetujuan human-in-the-loop — setujui/tolak dari dashboard |
+| `/knowledge` | Knowledge base RAG (termasuk studi kasus flywheel) |
+| `/pipeline` | Aktivitas global: job terjadwal + event |
+| `/kualitas` · `/booking` · `/workflow` | Tetap ada, kini juga diakses lewat tab agent **Sales** |
 
 Konfigurasi dashboard ada di `dashboard/.env.local`:
 
 ```
-NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:4000
 NEXT_PUBLIC_REFRESH_MS=5000
 ```
 
 Dashboard mem-*poll* API setiap 5 detik (indikator live di sidebar), jadi status
 transport WhatsApp dan `DRY_RUN` selalu terlihat. Backend mengaktifkan CORS lewat
 `CORS_ORIGIN` (default `*` untuk development). Build produksi: `npm run dashboard:build`.
+
+## Office (Claw3D)
+
+Kantor visual (control room) untuk melihat semua agent bekerja live dan **chat dengan
+supervisor/agent**. Claw3D (Next.js) terhubung ke aplikasi ini lewat **gateway adapter**
+WebSocket `claw3d/server/business-gateway-adapter.js` (port `18789`), yang membaca:
+
+- `GET /agents/status` → roster + status live (agent menyala saat bekerja)
+- `GET /agents/:slug/workflow` → riwayat pekerjaan per agent
+- `POST /office/chat` → jawaban chat ringan (berdasarkan peran agent + papan proses
+  bisnis + aktivitas terkini, via OpenRouter)
+
+Jalankan:
+
+```bash
+# 1. Business API (wajib)
+npm run dev                 # http://localhost:4000
+
+# 2. Gateway adapter (jembatan ke office)
+node claw3d/server/business-gateway-adapter.js   # ws://127.0.0.1:18789
+
+# 3. Office
+npm run claw3d:dev          # http://localhost:3000/office
+```
+
+> Di office, aktifkan floor yang menunjuk `ws://localhost:18789`. Buka chat agent
+> (mis. **Supervisor**) untuk mengobrol. Chat memakai `POST /office/chat` sehingga
+> responsif dan **tidak** membuat lead / mengirim WhatsApp.
 
 ## WhatsApp, Import Lead & Outreach
 
@@ -310,7 +482,7 @@ diperbarui otomatis tiap 3 detik (endpoint `GET /whatsapp/status` dan SSE
 Kirim prospek dari sumber mana pun ke database, langsung masuk antrean outreach:
 
 ```bash
-curl -X POST http://localhost:3000/webhook/leads \
+curl -X POST http://localhost:4000/webhook/leads \
   -H "content-type: application/json" \
   -H "x-api-key: $API_KEY" \
   -d '{"leads":[
@@ -427,9 +599,28 @@ src/
   memory/                 knowledge (RAG) + ltm (long-term memory)
   whatsapp/               transport, baileys, console
   graph/                  state, prompts, edges, nodes/, index (build), run
+  supervisor/             orchestrator: agents, state, prompts, nodes/, index, run
+  research/               Universal Research Engine (brief, state, nodes, run, workspace)
+  prospecting/            Research Prospecting: Maps → enrich kontak → leads (D1)
+  scout/                  Scout: pain-point & sudut outreach (D1)
+  scoper/                 Scoper & PRD Builder: transkrip → PRD + checklist (F2)
+  legal/                  Legal & Finance: PRD → SPK/NDA + invoice DP (F2)
+  intake/                 Intake & Credential: vault akses terenkripsi (F2)
+  qa/                     QA & Guardrail Tester (F3)
+  scribe/                 Documentation & SOP Builder (F3)
+  handover/               Handover & Final Invoice (F4)
+  support/                L1 Support & Triage (F4)
+  monitor/                Infrastructure & Cost Monitor (F4)
+  developer/              Developer & Automation (D4) — engine OpenCode, tools GitHub
+  content/                Case Study & Content Engine (F5)
+  pipeline/               F0: jobs, events, approvals, scheduler, handlers (briefing)
+  notifications/          notifikasi ke owner (WhatsApp)
+  integrations/           klien eksternal: calcom, firecrawl, camoufox
   api/                    server Express
   seed/                   data knowledge + runner
   scripts/                simulate, reset-db
+scripts/                  skrip Python (camoufox_fetch.py)
+workspace/research/       laporan + evidence hasil riset (file)
 dashboard/                UI monitoring (Next.js 16 + shadcn/ui)
   src/app/                halaman: ringkasan, leads, kualitas, booking
   src/components/         komponen UI + komponen data
@@ -447,7 +638,7 @@ dashboard/                UI monitoring (Next.js 16 + shadcn/ui)
 | `npm run sim` | Simulasi percakapan end-to-end |
 | `npm run cal:tools` | Tampilkan tool Cal.com MCP yang aktif |
 | `npm run db:reset` | Drop semua tabel (app + checkpointer) |
-| `docker compose up -d db` / `down` | Nyalakan/hentikan Postgres+pgvector |
+| `docker compose up -d` / `down` | Nyalakan/hentikan Postgres+pgvector (+ proxy SearXNG) |
 
 ## Menyesuaikan
 

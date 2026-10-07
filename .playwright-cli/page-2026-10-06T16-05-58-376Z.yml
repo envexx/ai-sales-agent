@@ -1,0 +1,20 @@
+- generic [ref=f1e3]:
+  - banner [ref=f1e4]:
+    - generic [ref=f1e10]:
+      - strong [ref=f1e11]: Agent Company
+      - generic [ref=f1e12]: Living workspace · The Delegation
+    - 'generic "Backend: http://127.0.0.1:4000" [ref=f1e13]':
+      - text: Koneksi putus
+      - button "Putuskan" [ref=f1e15] [cursor=pointer]
+    - generic [ref=f1e16]:
+      - button "14 agent" [ref=f1e17] [cursor=pointer]
+      - button "Layar penuh" [ref=f1e23] [cursor=pointer]
+  - main [ref=f1e29]:
+    - generic [ref=f1e30]: Menyiapkan ruang kerja dan kehidupan kantor…
+    - generic [ref=f1e32]:
+      - strong [ref=f1e33]: Status backend nyata
+      - generic [ref=f1e34]: 0 bekerja · 0 menunggu · 0 error
+    - button "Seluruh workspace" [ref=f1e35] [cursor=pointer]
+    - generic: Space + drag / drag kanan untuk geser · Drag untuk putar · Scroll untuk zoom
+    - generic: Karakter © Arturo Paracuellos · CC BY-NC 4.0
+    - generic "Workspace 3D. Tahan Space dan drag untuk menggeser view." [ref=f1e39]

@@ -1,0 +1,230 @@
+﻿{
+    "location":  "Bandung",
+    "verticals":  [
+                      {
+                          "niche":  "klinik tumbuh kembang anak",
+                          "industry":  "Kesehatan",
+                          "why":  "Jadwal terapi berulang \u0026 banyak pertanyaan orang tua lewat chat."
+                      },
+                      {
+                          "niche":  "klinik kecantikan",
+                          "industry":  "Kesehatan",
+                          "why":  "Booking, reminder treatment, dan tanya-tanya harga sangat repetitif."
+                      },
+                      {
+                          "niche":  "klinik gigi",
+                          "industry":  "Kesehatan",
+                          "why":  "Reservasi \u0026 follow-up kontrol pasien masih manual."
+                      }
+                  ],
+    "runs":  [
+                 {
+                     "id":  "1dd13f7a-d8e5-4608-a8d0-b32a555fe232",
+                     "brief":  {
+                                   "niche":  "klinik tumbuh kembang anak",
+                                   "location":  "Bandung",
+                                   "limit":  4,
+                                   "enrich":  true,
+                                   "queue":  false,
+                                   "excludeTech":  true,
+                                   "language":  "id"
+                               },
+                     "discovered":  4,
+                     "enriched":  4,
+                     "saved":  3,
+                     "skipped":  1,
+                     "excluded":  0,
+                     "cards":  [
+                                   {
+                                       "name":  "Pusat Terapi \u0026 Tumbuh Kembang Anak Terapeutik Bandung",
+                                       "source":  "google_maps",
+                                       "niche":  "klinik tumbuh kembang anak",
+                                       "location":  "Bandung",
+                                       "category":  null,
+                                       "rating":  5,
+                                       "reviews":  20,
+                                       "phone":  "0878-6473-5056",
+                                       "whatsapp":  "6287864735056",
+                                       "website":  "https://kliniktumbuhkembang.com",
+                                       "email":  null,
+                                       "address":  "Ruko Valencia Arcade, Jl. Boulevard Graha Raya No.17, Paku Jaya, Kec. Serpong Utara, Kota Tangerang Selatan, Banten 15324",
+                                       "leadId":  "836f0f57-499c-453e-9db2-ff61cbe2a457",
+                                       "saved":  true
+                                   },
+                                   {
+                                       "name":  "Keanna Center Bandung",
+                                       "source":  "google_maps",
+                                       "niche":  "klinik tumbuh kembang anak",
+                                       "location":  "Bandung",
+                                       "category":  null,
+                                       "rating":  5,
+                                       "reviews":  32,
+                                       "phone":  "0897-8744-541",
+                                       "whatsapp":  "628978744541",
+                                       "website":  "https://keannacenter.com/cabang",
+                                       "email":  "keannacentergroup@gmail.com",
+                                       "address":  "Jl. Jupiter Utama D-II No.12, Sekejati, Kec. Buahbatu, Kota Bandung, Jawa Barat 40286; Gdg. Gyana Life Jl. Gatot Subroto No. 28, Bandung Satu, Jawa Barat, Indonesia 40262",
+                                       "leadId":  "f3bdc8d6-f1d8-4610-9f57-87943439c690",
+                                       "saved":  true
+                                   },
+                                   {
+                                       "name":  "Klinik Utama Tanaya \u0026 Apotik Tanaya",
+                                       "source":  "google_maps",
+                                       "niche":  "klinik tumbuh kembang anak",
+                                       "location":  "Bandung",
+                                       "category":  null,
+                                       "rating":  4.1,
+                                       "reviews":  61,
+                                       "phone":  "(022) 4235359",
+                                       "whatsapp":  null,
+                                       "website":  "https://lewatmana.com/lokasi/11622/tanaya",
+                                       "email":  null,
+                                       "address":  "Jl. Sulanjana No. 11 A, Bandung, Jawa Barat, Indonesia 40116",
+                                       "leadId":  null,
+                                       "saved":  false,
+                                       "reason":  "nomor tidak ditemukan"
+                                   },
+                                   {
+                                       "name":  "Klinik Tumbuh Kembang",
+                                       "source":  "google_maps",
+                                       "niche":  "klinik tumbuh kembang anak",
+                                       "location":  "Bandung",
+                                       "category":  null,
+                                       "rating":  4,
+                                       "reviews":  1,
+                                       "phone":  "+6281717150770",
+                                       "whatsapp":  "6281717150770",
+                                       "website":  "https://mayapadahospital.com/news/mayapada-hospital-bandung-resmi-hadirkan-klinik-tumbuh-kembang-anak-klinik-neurobehavior-sebagai-one-stop-solution-perkembangan-anak",
+                                       "email":  null,
+                                       "address":  "Bandung",
+                                       "leadId":  "020bc251-d9fb-42ed-8cd3-9abda939e230",
+                                       "saved":  true
+                                   }
+                               ],
+                     "errors":  [
+
+                                ],
+                     "workspace":  "C:\\AI\\AI Agent LangGraph\\workspace\\prospecting\\1dd13f7a-d8e5-4608-a8d0-b32a555fe232"
+                 },
+                 {
+                     "id":  "ea769018-f167-4f64-baad-182938eae4e1",
+                     "brief":  {
+                                   "niche":  "klinik kecantikan",
+                                   "location":  "Bandung",
+                                   "limit":  4,
+                                   "enrich":  true,
+                                   "queue":  false,
+                                   "excludeTech":  true,
+                                   "language":  "id"
+                               },
+                     "discovered":  0,
+                     "enriched":  0,
+                     "saved":  0,
+                     "skipped":  0,
+                     "excluded":  0,
+                     "cards":  [
+
+                               ],
+                     "errors":  [
+
+                                ],
+                     "workspace":  "C:\\AI\\AI Agent LangGraph\\workspace\\prospecting\\ea769018-f167-4f64-baad-182938eae4e1"
+                 },
+                 {
+                     "id":  "eb2bae9d-1771-4464-9c14-311a5cbfe3cb",
+                     "brief":  {
+                                   "niche":  "klinik gigi",
+                                   "location":  "Bandung",
+                                   "limit":  4,
+                                   "enrich":  true,
+                                   "queue":  false,
+                                   "excludeTech":  true,
+                                   "language":  "id"
+                               },
+                     "discovered":  4,
+                     "enriched":  4,
+                     "saved":  2,
+                     "skipped":  2,
+                     "excluded":  0,
+                     "cards":  [
+                                   {
+                                       "name":  "KER Dental",
+                                       "source":  "google_maps",
+                                       "niche":  "klinik gigi",
+                                       "location":  "Bandung",
+                                       "category":  "Bersponsor",
+                                       "rating":  null,
+                                       "reviews":  null,
+                                       "phone":  "(022) 421 7116",
+                                       "whatsapp":  null,
+                                       "website":  "https://www.mydentalclinicbandung.com",
+                                       "email":  null,
+                                       "address":  null,
+                                       "leadId":  null,
+                                       "saved":  false,
+                                       "reason":  "nomor tidak ditemukan"
+                                   },
+                                   {
+                                       "name":  "AVA Dental Aesthetic",
+                                       "source":  "google_maps",
+                                       "niche":  "klinik gigi",
+                                       "location":  "Bandung",
+                                       "category":  "Bersponsor",
+                                       "rating":  null,
+                                       "reviews":  null,
+                                       "phone":  "6281299906161",
+                                       "whatsapp":  "6281299906161",
+                                       "website":  "https://avadental.co.id",
+                                       "email":  null,
+                                       "address":  "Bandung",
+                                       "leadId":  "787c9c27-e6a0-4503-8d86-f4f33cdd98bf",
+                                       "saved":  true
+                                   },
+                                   {
+                                       "name":  "Klinik Gigi Bandung - FDC Bandung Paskal",
+                                       "source":  "google_maps",
+                                       "niche":  "klinik gigi",
+                                       "location":  "Bandung",
+                                       "category":  null,
+                                       "rating":  null,
+                                       "reviews":  null,
+                                       "phone":  "",
+                                       "whatsapp":  null,
+                                       "website":  "https://www.mymeditravel.com/medical-centers/indonesia/west-java/bandung/fdc-dental-clinic-bandung",
+                                       "email":  "",
+                                       "address":  "",
+                                       "leadId":  null,
+                                       "saved":  false,
+                                       "reason":  "nomor tidak ditemukan"
+                                   },
+                                   {
+                                       "name":  "DANTE Dental Care",
+                                       "source":  "google_maps",
+                                       "niche":  "klinik gigi",
+                                       "location":  "Bandung",
+                                       "category":  null,
+                                       "rating":  null,
+                                       "reviews":  null,
+                                       "phone":  "0817-1729-2009",
+                                       "whatsapp":  "6281717292009",
+                                       "website":  "https://indonesiaknowledge.com/directory/dental/bandung/dante-dental-care-klinik-dokter-gigi-bandung-bandung",
+                                       "email":  null,
+                                       "address":  "Jl. Cendana No.10, Cihapit, Bandung Wetan, Bandung City, West Java 40114",
+                                       "leadId":  "78c7353e-5bc6-4ce9-9cb3-0fc708a238e4",
+                                       "saved":  true
+                                   }
+                               ],
+                     "errors":  [
+
+                                ],
+                     "workspace":  "C:\\AI\\AI Agent LangGraph\\workspace\\prospecting\\eb2bae9d-1771-4464-9c14-311a5cbfe3cb"
+                 }
+             ],
+    "totals":  {
+                   "discovered":  8,
+                   "enriched":  8,
+                   "saved":  5,
+                   "skipped":  3,
+                   "excluded":  0
+               }
+}

@@ -28,6 +28,25 @@ import type { Lead, Segment } from "@/lib/api";
 type SegmentFilter = "all" | "nurture" | "objection" | "closing";
 type SortKey = "score" | "recent";
 
+/** Info bisnis yang tersimpan di meta lead (dari prospecting/scout). */
+function businessInfo(lead: Lead): {
+  company: string | null;
+  niche: string | null;
+  location: string | null;
+  website: string | null;
+} {
+  const meta = lead.meta as {
+    prospect?: { niche?: string; location?: string; website?: string };
+    scout?: { industry?: string };
+  };
+  return {
+    company: lead.company,
+    niche: meta.prospect?.niche ?? meta.scout?.industry ?? null,
+    location: meta.prospect?.location ?? null,
+    website: meta.prospect?.website ?? null,
+  };
+}
+
 export function LeadTable({ leads }: { leads: Lead[] }) {
   const [q, setQ] = React.useState("");
   const [segment, setSegment] = React.useState<SegmentFilter>("all");
@@ -40,7 +59,9 @@ export function LeadTable({ leads }: { leads: Lead[] }) {
       .filter((l) =>
         needle
           ? (l.name ?? "").toLowerCase().includes(needle) ||
-            l.waJid.toLowerCase().includes(needle)
+            l.waJid.toLowerCase().includes(needle) ||
+            (businessInfo(l).company ?? "").toLowerCase().includes(needle) ||
+            (businessInfo(l).niche ?? "").toLowerCase().includes(needle)
           : true,
       )
       .sort((a, b) =>
@@ -51,9 +72,9 @@ export function LeadTable({ leads }: { leads: Lead[] }) {
   }, [leads, q, segment, sort]);
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative min-w-56 flex-1">
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative min-w-0 flex-1 basis-full xl:basis-56">
           <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={q}
@@ -65,7 +86,7 @@ export function LeadTable({ leads }: { leads: Lead[] }) {
         </div>
 
         <Select value={segment} onValueChange={(v) => setSegment(v as SegmentFilter)}>
-          <SelectTrigger className="h-9 w-40" aria-label="Filter segmen">
+          <SelectTrigger className="h-10 w-auto min-w-0 flex-1 sm:max-w-48 xl:flex-none" aria-label="Filter segmen">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -77,7 +98,7 @@ export function LeadTable({ leads }: { leads: Lead[] }) {
         </Select>
 
         <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
-          <SelectTrigger className="h-9 w-40" aria-label="Urutkan">
+          <SelectTrigger className="h-10 w-auto min-w-0 flex-1 sm:max-w-48 xl:flex-none" aria-label="Urutkan">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -91,7 +112,8 @@ export function LeadTable({ leads }: { leads: Lead[] }) {
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-[38%]">Lead</TableHead>
+              <TableHead className="w-[30%]">Lead</TableHead>
+              <TableHead className="hidden lg:table-cell">Bisnis</TableHead>
               <TableHead className="w-28">Segmen</TableHead>
               <TableHead className="w-32">
                 <span className="inline-flex items-center gap-1">
@@ -103,7 +125,9 @@ export function LeadTable({ leads }: { leads: Lead[] }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rows.map((lead) => (
+            {rows.map((lead) => {
+              const b = businessInfo(lead);
+              return (
               <TableRow key={lead.id} className="group">
                 <TableCell>
                   <Link
@@ -127,12 +151,33 @@ export function LeadTable({ leads }: { leads: Lead[] }) {
                             prospek · {lead.outreachStatus.replace("_", " ")}
                           </span>
                         ) : null}
+                        {(lead.meta as { scout?: unknown } | undefined)?.scout ? (
+                          <span className="shrink-0 rounded border border-emerald-500/25 bg-emerald-500/10 px-1 py-0 text-[10px] text-emerald-700 dark:text-emerald-400">
+                            scout ✓
+                          </span>
+                        ) : null}
                       </span>
                       <span className="block truncate font-mono text-[11px] text-muted-foreground">
                         {phoneFromJid(lead.waJid)}
                       </span>
                     </span>
                   </Link>
+                </TableCell>
+                <TableCell className="hidden lg:table-cell">
+                  {b.company || b.niche ? (
+                    <span className="block min-w-0">
+                      {b.company ? (
+                        <span className="block truncate text-sm">{b.company}</span>
+                      ) : null}
+                      {b.niche || b.location ? (
+                        <span className="block truncate text-[11px] text-muted-foreground">
+                          {[b.niche, b.location].filter(Boolean).join(" · ")}
+                        </span>
+                      ) : null}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
+                  )}
                 </TableCell>
                 <TableCell>
                   <SegmentBadge segment={lead.segment} withBand />
@@ -147,7 +192,8 @@ export function LeadTable({ leads }: { leads: Lead[] }) {
                   {relativeTime(lead.lastSeen)}
                 </TableCell>
               </TableRow>
-            ))}
+              );
+            })}
           </TableBody>
         </Table>
 

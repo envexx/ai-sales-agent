@@ -24,6 +24,17 @@ import { Separator } from "@/components/ui/separator";
 import { useLead } from "@/lib/hooks";
 import { formatDateTime, initials, phoneFromJid, relativeTime } from "@/lib/format";
 
+/** Hasil audit Scout untuk sebuah prospek. */
+interface ScoutIntel {
+  painPoints?: string[];
+  opportunity?: string;
+  offerings?: string[];
+  approach?: string;
+  outreachAngle?: string;
+  confidence?: number;
+  at?: string;
+}
+
 export function LeadDetailView({ id }: { id: string }) {
   const { data, error, isLoading } = useLead(id);
 
@@ -31,7 +42,7 @@ export function LeadDetailView({ id }: { id: string }) {
     return (
       <>
         <PageHeader title="Detail lead" actions={<ThemeToggle />} />
-        <PageBody className="space-y-4">
+        <PageBody className="space-y-6">
           <BackLink />
           <ErrorState message={error.message} />
         </PageBody>
@@ -43,7 +54,7 @@ export function LeadDetailView({ id }: { id: string }) {
     return (
       <>
         <PageHeader title="Detail lead" actions={<ThemeToggle />} />
-        <PageBody className="space-y-4">
+        <PageBody className="space-y-6">
           <TableSkeleton rows={1} className="[&>div]:h-24" />
           <CardsSkeleton count={2} />
         </PageBody>
@@ -55,6 +66,10 @@ export function LeadDetailView({ id }: { id: string }) {
 
   const { lead, messages, evaluations, bookings } = data;
   const latestEval = evaluations[0];
+  const scout = (lead.meta as { scout?: ScoutIntel } | undefined)?.scout;
+  const prospect = (
+    lead.meta as { prospect?: { niche?: string; location?: string; website?: string } } | undefined
+  )?.prospect;
 
   return (
     <>
@@ -64,7 +79,7 @@ export function LeadDetailView({ id }: { id: string }) {
         actions={<ThemeToggle />}
       />
 
-      <PageBody className="space-y-4">
+      <PageBody className="space-y-6">
         <BackLink />
 
         <Card>
@@ -113,11 +128,97 @@ export function LeadDetailView({ id }: { id: string }) {
               label="Booking"
               value={bookings[0]?.status ?? "—"}
             />
+            {lead.company ? (
+              <QuickFact
+                icon={<Target className="size-3.5" />}
+                label="Bisnis"
+                value={lead.company}
+              />
+            ) : null}
+            {prospect?.niche || prospect?.location ? (
+              <QuickFact
+                icon={<Target className="size-3.5" />}
+                label="Niche"
+                value={[prospect?.niche, prospect?.location].filter(Boolean).join(" · ")}
+              />
+            ) : null}
+            {lead.source ? (
+              <QuickFact
+                icon={<Target className="size-3.5" />}
+                label="Sumber"
+                value={lead.source.replace(/_/g, " ")}
+              />
+            ) : null}
           </CardContent>
         </Card>
 
-        <div className="grid gap-4 lg:grid-cols-5">
-          <Card className="self-start lg:col-span-3">
+        {scout ? (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex flex-wrap items-center gap-2 text-sm font-medium">
+                <Target className="size-3.5" /> Intelijen Prospek (Scout)
+                {typeof scout.confidence === "number" ? (
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-normal text-muted-foreground">
+                    keyakinan {Math.round(scout.confidence * 100)}%
+                  </span>
+                ) : null}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-5 pt-0 md:grid-cols-2">
+              {scout.painPoints?.length ? (
+                <section className="space-y-2">
+                  <h3 className="text-[11px] font-medium uppercase text-muted-foreground">
+                    Masalah (pain point)
+                  </h3>
+                  <ul className="list-disc space-y-1 pl-4 text-sm leading-6">
+                    {scout.painPoints.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+              {scout.offerings?.length ? (
+                <section className="space-y-2">
+                  <h3 className="text-[11px] font-medium uppercase text-muted-foreground">
+                    Yang ditawarkan
+                  </h3>
+                  <ul className="list-disc space-y-1 pl-4 text-sm leading-6">
+                    {scout.offerings.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+              {scout.opportunity ? (
+                <section className="space-y-2 md:col-span-2">
+                  <h3 className="text-[11px] font-medium uppercase text-muted-foreground">
+                    Peluang otomasi
+                  </h3>
+                  <p className="text-sm leading-6">{scout.opportunity}</p>
+                </section>
+              ) : null}
+              {scout.approach ? (
+                <section className="space-y-2 md:col-span-2">
+                  <h3 className="text-[11px] font-medium uppercase text-muted-foreground">
+                    Cara mendekati &amp; membangun
+                  </h3>
+                  <p className="text-sm leading-6">{scout.approach}</p>
+                </section>
+              ) : null}
+              {scout.outreachAngle ? (
+                <section className="space-y-2 md:col-span-2">
+                  <h3 className="text-[11px] font-medium uppercase text-muted-foreground">
+                    Sudut outreach (value-first)
+                  </h3>
+                  <p className="text-sm leading-6 text-muted-foreground">{scout.outreachAngle}</p>
+                </section>
+              ) : null}
+            </CardContent>
+          </Card>
+        ) : null}
+
+        <div className="grid gap-6 xl:grid-cols-5">
+          <Card className="self-start xl:col-span-3">
             <CardHeader>
               <CardTitle className="text-sm font-medium">
                 Percakapan · {messages.length} pesan
@@ -136,7 +237,7 @@ export function LeadDetailView({ id }: { id: string }) {
             </CardContent>
           </Card>
 
-          <div className="space-y-4 lg:col-span-2">
+          <div className="space-y-6 xl:col-span-2">
             {latestEval ? (
               <Card>
                 <CardHeader>

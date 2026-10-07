@@ -67,7 +67,7 @@ export function WhatsAppConnect() {
 
   return (
     <Card>
-      <CardHeader className="flex-row items-center justify-between space-y-0">
+      <CardHeader className="flex flex-wrap items-center justify-between gap-3">
         <CardTitle className="flex items-center gap-2 text-sm font-medium">
           <Smartphone className="size-4 text-muted-foreground" />
           Koneksi WhatsApp
@@ -117,7 +117,7 @@ export function WhatsAppConnect() {
             </div>
           ) : null}
 
-          <div className="min-w-56 flex-1 space-y-3">
+          <div className="min-w-0 flex-1 basis-56 space-y-4">
             {state === "connected" && data?.me ? (
               <div className="flex items-center gap-2 rounded-md border bg-muted/40 px-3 py-2">
                 <CheckCircle2 className="size-4 text-emerald-600" />

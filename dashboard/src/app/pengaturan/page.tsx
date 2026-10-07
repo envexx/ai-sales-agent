@@ -14,9 +14,9 @@ export default function SettingsPage() {
         description="Hubungkan WhatsApp, impor lead, dan atur outreach otomatis."
         actions={<ThemeToggle />}
       />
-      <PageBody className="space-y-4">
+      <PageBody className="space-y-6">
         <WhatsAppConnect />
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid items-start gap-6 xl:grid-cols-2">
           <LeadImport />
           <OutreachPanel />
         </div>

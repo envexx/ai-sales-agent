@@ -1,9 +1,9 @@
 import type { BaseMessage } from "@langchain/core/messages";
 
-/** A document retrieved from the knowledge base or long-term memory. */
+/** A document retrieved from the knowledge base, long-term memory, or Scout. */
 export interface RetrievedDoc {
   id: string | number;
-  source: "knowledge" | "memory";
+  source: "knowledge" | "memory" | "scout";
   title: string;
   content: string;
   score: number;
@@ -106,6 +106,8 @@ export interface LeadRecord {
   lastOutreachAt: string | null;
   nextFollowUpAt: string | null;
   optOut: boolean;
+  /** Gate Sales/outreach: discovered → scouted_ready → in_sales → won|lost|nurture. */
+  readiness: string;
 }
 
 /** Payload entering the graph for a single inbound WhatsApp message. */
@@ -113,6 +115,8 @@ export interface InboundTurn {
   threadId: string;
   leadId: string | null;
   waJid: string;
+  /** JID `@lid` asli bila berbeda dari `waJid` (untuk merge lead). */
+  lidJid?: string | null;
   contactName?: string | null;
   text: string;
   messageId?: string | null;

@@ -43,7 +43,9 @@ export function StatusPill({ compact = false }: { compact?: boolean }) {
           <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
         </span>
         <span className="font-medium text-foreground">API terhubung</span>
-        <span className="ml-auto font-mono text-muted-foreground">{data.model}</span>
+        {!compact ? (
+          <span className="ml-auto font-mono text-muted-foreground">{data.model}</span>
+        ) : null}
       </div>
       {!compact ? (
         <div className="flex items-center gap-1.5 text-muted-foreground">

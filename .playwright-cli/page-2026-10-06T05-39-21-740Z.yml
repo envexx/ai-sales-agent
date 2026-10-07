@@ -1,0 +1,4 @@
+- generic [active] [ref=f203e1]:
+  - main [ref=f203e2]:
+    - status [ref=f203e3]: Loading office…
+  - button "Open Next.js Dev Tools" [ref=f203e9] [cursor=pointer]

@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sales Agent · Monitoring",
+  title: "Agent Company",
   description:
-    "Monitoring lead, percakapan, dan kualitas agen sales WhatsApp berbasis LangGraph.",
+    "Control room untuk memantau agent, workflow, dan keputusan operasional berbasis LangGraph.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

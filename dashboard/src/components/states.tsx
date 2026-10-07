@@ -20,7 +20,7 @@ export function EmptyState({
       </span>
       <div className="space-y-1">
         <p className="text-sm font-medium">{title}</p>
-        <p className="mx-auto max-w-md text-sm text-muted-foreground">{description}</p>
+        <p className="mx-auto max-w-md text-sm leading-6 text-muted-foreground">{description}</p>
       </div>
       {action}
     </div>
@@ -31,7 +31,7 @@ export function ErrorState({ message }: { message: string }) {
   return (
     <div className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm">
       <AlertTriangle className="mt-0.5 size-4 shrink-0 text-destructive" />
-      <div className="space-y-1">
+      <div className="min-w-0 space-y-2 break-words">
         <p className="font-medium text-foreground">Tidak bisa memuat data</p>
         <p className="text-muted-foreground">
           {message}. Pastikan API berjalan di <code className="font-mono">{API_URL}</code>{" "}

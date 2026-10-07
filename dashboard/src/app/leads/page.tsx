@@ -17,7 +17,7 @@ export default function LeadsPage() {
         description="Semua prospek yang pernah menghubungi, diurutkan berdasarkan skor."
         actions={<ThemeToggle />}
       />
-      <PageBody className="space-y-4">
+      <PageBody className="space-y-6">
         {error ? <ErrorState message={error.message} /> : null}
         {isLoading && !data ? <TableSkeleton rows={8} /> : null}
         {data && data.length > 0 ? <LeadTable leads={data} /> : null}

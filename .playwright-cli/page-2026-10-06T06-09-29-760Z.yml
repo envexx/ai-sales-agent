@@ -1,0 +1,57 @@
+- generic [active] [ref=f236e1]:
+  - generic [ref=f236e2]:
+    - complementary [ref=f236e3]:
+      - link "Agent Company" [ref=f236e4] [cursor=pointer]:
+        - /url: /
+      - navigation "Navigasi utama" [ref=f236e10]:
+        - generic [ref=f236e11]:
+          - paragraph [ref=f236e12]: Bisnis
+          - link "Proses bisnis" [ref=f236e13] [cursor=pointer]:
+            - /url: /
+          - link "Workflow" [ref=f236e16] [cursor=pointer]:
+            - /url: /workflow
+          - link "Approval" [ref=f236e21] [cursor=pointer]:
+            - /url: /approvals
+          - link "Tiket" [ref=f236e25] [cursor=pointer]:
+            - /url: /tickets
+        - generic [ref=f236e29]:
+          - paragraph [ref=f236e30]: Data & Operasi
+          - link "Leads & percakapan" [ref=f236e31] [cursor=pointer]:
+            - /url: /leads
+          - link "Proyek" [ref=f236e36] [cursor=pointer]:
+            - /url: /projects
+          - link "Invoice" [ref=f236e39] [cursor=pointer]:
+            - /url: /invoices
+          - link "Booking" [ref=f236e42] [cursor=pointer]:
+            - /url: /booking
+          - link "Kualitas balasan" [ref=f236e47] [cursor=pointer]:
+            - /url: /kualitas
+          - link "Knowledge" [ref=f236e51] [cursor=pointer]:
+            - /url: /knowledge
+          - link "Aktivitas bisnis" [ref=f236e54] [cursor=pointer]:
+            - /url: /pipeline
+      - generic [ref=f236e57]:
+        - link "Claw3D office ↗" [ref=f236e58] [cursor=pointer]:
+          - /url: http://localhost:3000/office
+        - link "Pengaturan" [ref=f236e62] [cursor=pointer]:
+          - /url: /pengaturan
+        - generic [ref=f236e66]: Menghubungkan…
+    - main [ref=f236e70]:
+      - generic [ref=f236e72]:
+        - generic [ref=f236e73]:
+          - heading "Proyek" [level=1] [ref=f236e74]
+          - paragraph [ref=f236e75]: Satu folder untuk konteks, dokumen, dan perjalanan setiap proyek.
+        - button "Aktifkan tema gelap" [ref=f236e77]
+      - generic [ref=f236e79]:
+        - generic [ref=f236e80]:
+          - textbox "Cari folder proyek" [ref=f236e85]:
+            - /placeholder: Cari proyek…
+          - generic [ref=f236e86]:
+            - button "Semua" [pressed] [ref=f236e87]
+            - button "Aktif" [ref=f236e88]
+            - button "Diserahkan" [ref=f236e89]
+        - region "Folder proyek" [ref=f236e90]:
+          - generic [ref=f236e91]:
+            - heading "Folder proyek" [level=2] [ref=f236e92]
+            - generic [ref=f236e93]: "0"
+  - button "Open Next.js Dev Tools" [ref=f236e100] [cursor=pointer]

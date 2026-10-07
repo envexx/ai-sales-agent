@@ -3,6 +3,8 @@ import { textInvoke } from "../../llm/index.js";
 import { businessContext, responsePrompt } from "../prompts.js";
 import type { SalesStateType, SalesUpdateType } from "../state.js";
 import { formatContext, traceEntry, transcript } from "./helpers.js";
+import { timeGreetingContext } from "../../util/time.js";
+import { stripPlaceholderUrls } from "../../util/sanitize.js";
 
 /** Generate the WhatsApp reply that follows the chosen strategy. */
 export async function responseGenerationNode(
@@ -38,6 +40,8 @@ export async function responseGenerationNode(
       ? `Strategi:\n${JSON.stringify(strategy, null, 2)}`
       : "Strategi: (tidak tersedia, gunakan penilaian terbaik)",
     scheduling ? `Informasi penjadwalan:\n${scheduling}` : "",
+    timeGreetingContext(),
+    "Aturan sapaan: patuhi 'Aturan sapaan harian' pada konteks di atas. Bila klien SUDAH disapa hari ini, JANGAN menulis sapaan waktu atau halo — langsung ke inti. Bila BELUM, awali dengan tepat satu sapaan waktu.",
     "Tulis satu balasan WhatsApp yang siap kirim:",
   ]
     .filter(Boolean)
@@ -49,8 +53,10 @@ export async function responseGenerationNode(
       human,
       temperature: 0.6,
       maxTokens: 500,
+      name: "ResponseGeneration",
     });
-    const finalResponse = message.trim();
+    // Final guard: never ship a placeholder URL to a real prospect.
+    const finalResponse = stripPlaceholderUrls(message.trim());
     return {
       draftResponse: finalResponse,
       finalResponse,

@@ -1,20 +1,6 @@
-"use client";
-
+import { Suspense } from "react";
 import { PageBody, PageHeader } from "@/components/page-header";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { WorkflowCanvas } from "@/components/workflow/workflow-canvas";
-
+import { BusinessWorkflow } from "@/components/business-workflow";
 export default function WorkflowPage() {
-  return (
-    <>
-      <PageHeader
-        title="Alur Kerja Agen"
-        description="State machine LangGraph: triage, RAG, scoring, penjadwalan, dan umpan balik memori jangka panjang."
-        actions={<ThemeToggle />}
-      />
-      <PageBody>
-        <WorkflowCanvas />
-      </PageBody>
-    </>
-  );
+  return <><PageHeader title="Workflow bisnis" /><PageBody className="pt-2 lg:pt-2"><Suspense fallback={<p>Memuat workflow…</p>}><BusinessWorkflow /></Suspense></PageBody></>;
 }

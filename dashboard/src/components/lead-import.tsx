@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const EXAMPLE = `[
-  { "name": "Andi", "phone": "081234567890", "company": "PT Maju Jaya",
+  { "name": "Andi", "phone": "081200000000", "company": "PT Maju Jaya",
     "source": "instagram", "notes": "Butuh otomatisasi order", "queue": true }
 ]`;
 
@@ -49,15 +49,15 @@ export function LeadImport() {
           Impor Lead (Outbound)
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3 pt-0">
-        <p className="text-xs text-muted-foreground">
+      <CardContent className="space-y-4 pt-0">
+        <p className="break-words text-xs leading-5 text-muted-foreground">
           Tempel satu objek lead, array, atau <code className="font-mono">{"{ leads: [...] }"}</code>.
           Hanya <code className="font-mono">phone</code> yang wajib; field lain:{" "}
           <code className="font-mono">name · company · source · notes · tags · countryCode · queue</code>.
           Alias seperti <code className="font-mono">nomor</code>, <code className="font-mono">nama</code>,{" "}
           <code className="font-mono">perusahaan</code>, <code className="font-mono">kebutuhan</code> juga
           diterima. Lead masuk sebagai <code className="font-mono">kind=prospect</code> dan otomatis
-          masuk antrean outreach (<code className="font-mono">"queue": false</code> untuk menyimpan saja).
+          masuk antrean outreach (<code className="font-mono">&quot;queue&quot;: false</code> untuk menyimpan saja).
         </p>
         <p className="rounded-md border bg-muted/40 px-2.5 py-1.5 font-mono text-[11px] text-muted-foreground">
           POST /webhook/leads · spesifikasi: GET /webhook/leads/schema
@@ -72,7 +72,7 @@ export function LeadImport() {
           className="w-full rounded-md border bg-background p-3 font-mono text-xs outline-none focus:ring-1 focus:ring-ring"
         />
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-3">
           <Button size="sm" onClick={submit} disabled={busy || raw.trim().length === 0}>
             {busy ? <Loader2 className="size-3.5 animate-spin" /> : <Upload className="size-3.5" />}
             Impor ke Database

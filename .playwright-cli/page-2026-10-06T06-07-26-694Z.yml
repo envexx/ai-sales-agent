@@ -1,0 +1,41 @@
+- generic [active] [ref=f235e1]:
+  - generic [ref=f235e2]:
+    - complementary [ref=f235e3]:
+      - link "Agent Company" [ref=f235e4] [cursor=pointer]:
+        - /url: /
+      - navigation "Navigasi utama" [ref=f235e10]:
+        - generic [ref=f235e11]:
+          - paragraph [ref=f235e12]: Bisnis
+          - link "Proses bisnis" [ref=f235e13] [cursor=pointer]:
+            - /url: /
+          - link "Workflow" [ref=f235e16] [cursor=pointer]:
+            - /url: /workflow
+          - link "Approval" [ref=f235e21] [cursor=pointer]:
+            - /url: /approvals
+          - link "Tiket" [ref=f235e25] [cursor=pointer]:
+            - /url: /tickets
+        - generic [ref=f235e29]:
+          - paragraph [ref=f235e30]: Data & Operasi
+          - link "Leads & percakapan" [ref=f235e31] [cursor=pointer]:
+            - /url: /leads
+          - link "Proyek" [ref=f235e36] [cursor=pointer]:
+            - /url: /projects
+          - link "Invoice" [ref=f235e39] [cursor=pointer]:
+            - /url: /invoices
+          - link "Booking" [ref=f235e42] [cursor=pointer]:
+            - /url: /booking
+          - link "Kualitas balasan" [ref=f235e47] [cursor=pointer]:
+            - /url: /kualitas
+          - link "Knowledge" [ref=f235e51] [cursor=pointer]:
+            - /url: /knowledge
+          - link "Aktivitas bisnis" [ref=f235e54] [cursor=pointer]:
+            - /url: /pipeline
+      - generic [ref=f235e57]:
+        - link "Claw3D office ↗" [ref=f235e58] [cursor=pointer]:
+          - /url: http://localhost:3000/office
+        - link "Pengaturan" [ref=f235e62] [cursor=pointer]:
+          - /url: /pengaturan
+        - generic [ref=f235e66]: Menghubungkan…
+    - main [ref=f235e70]:
+      - heading "Workflow bisnis" [level=1] [ref=f235e74]
+  - button "Open Next.js Dev Tools" [ref=f235e82] [cursor=pointer]

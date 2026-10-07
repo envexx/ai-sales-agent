@@ -2,15 +2,19 @@ import { EventEmitter } from "node:events";
 import { rm } from "node:fs/promises";
 import makeWASocket, {
   DisconnectReason,
+  downloadMediaMessage,
   fetchLatestBaileysVersion,
   getContentType,
   useMultiFileAuthState,
+  type WAMessage,
   type WASocket,
 } from "baileys";
 import QRCode from "qrcode";
 import { pino } from "pino";
 import { env } from "../config/env.js";
 import { loggerFor } from "../config/logger.js";
+import { describeImage } from "../integrations/vision.js";
+import { transcribeAudio } from "../integrations/whisper.js";
 import type { IncomingHandler } from "./transport.js";
 
 const log = loggerFor("wa:service");
@@ -72,6 +76,44 @@ function extractText(raw: ProtoMessage): string {
 }
 
 /**
+ * Tentukan teks yang diproses pipeline dari satu pesan. Bila pesan berupa
+ * media, unduh lalu ubah jadi teks: voice note → transkrip Whisper,
+ * gambar → deskripsi DeepSeek vision. Hanya dijalankan saat dibutuhkan.
+ */
+async function resolveIncomingText(sock: WASocket, msg: WAMessage): Promise<string> {
+  const text = extractText(msg.message as ProtoMessage).trim();
+  if (text) return text;
+  if (!env.MEDIA_ENABLED) return "";
+
+  const raw = unwrap(msg.message as ProtoMessage) as Record<string, unknown> | null | undefined;
+  const type = raw ? getContentType(raw as never) : undefined;
+
+  try {
+    if (type === "audioMessage") {
+      const buffer = await downloadMediaMessage(msg, "buffer", {}, {
+        logger: silentLogger,
+        reuploadRequest: sock.updateMediaMessage,
+      });
+      const transcript = await transcribeAudio(Buffer.from(buffer), "ogg");
+      return transcript ? `[Voice note] ${transcript}` : "";
+    }
+    if (type === "imageMessage") {
+      const buffer = await downloadMediaMessage(msg, "buffer", {}, {
+        logger: silentLogger,
+        reuploadRequest: sock.updateMediaMessage,
+      });
+      const mime =
+        (raw?.imageMessage as { mimetype?: string } | undefined)?.mimetype ?? "image/jpeg";
+      const desc = await describeImage(Buffer.from(buffer), mime);
+      return desc ? `[Gambar] ${desc}` : "";
+    }
+  } catch (err) {
+    log.warn({ err: (err as Error).message }, "gagal memproses media masuk");
+  }
+  return "";
+}
+
+/**
  * Single owner of the WhatsApp (Baileys) socket.
  *
  * Exposes a small state machine the dashboard can drive over HTTP: connect,
@@ -87,6 +129,11 @@ class WhatsAppService extends EventEmitter {
   private _me: { id: string; name: string | null } | null = null;
   private _lastError: string | null = null;
   private _updatedAt = new Date().toISOString();
+  /** Penanda pesan yang sudah diproses (cegah balasan dobel). */
+  private processedIds = new Set<string>();
+  private processedOrder: string[] = [];
+  /** Antrean per-kontak: proses pesan satu per satu agar tidak balapan. */
+  private threadChains = new Map<string, Promise<void>>();
 
   setHandler(handler: IncomingHandler): void {
     this.handler = handler;
@@ -143,7 +190,29 @@ class WhatsAppService extends EventEmitter {
     return this.status();
   }
 
+  /** Catat id pesan yang sudah diproses (dengan batas memori). */
+  private rememberProcessed(id: string): void {
+    this.processedIds.add(id);
+    this.processedOrder.push(id);
+    if (this.processedOrder.length > 5000) {
+      const oldest = this.processedOrder.shift();
+      if (oldest) this.processedIds.delete(oldest);
+    }
+  }
+
+  /** Tunggu sampai socket siap (mis. sedang reconnect) sebelum menyerah. */
+  private async waitUntilConnected(timeoutMs: number): Promise<void> {
+    const deadline = Date.now() + timeoutMs;
+    while (this._state !== "connected" || !this.sock) {
+      if (this._state === "logged_out") throw new Error("WhatsApp sudah logout");
+      if (Date.now() > deadline) throw new Error("WhatsApp belum terhubung");
+      await delay(500);
+    }
+  }
+
   async sendText(to: string, text: string): Promise<{ id: string | null }> {
+    // Jangan langsung gagal bila sedang reconnect — tunggu koneksi sebentar.
+    await this.waitUntilConnected(env.WA_SEND_CONNECT_TIMEOUT_MS);
     if (!this.sock || this._state !== "connected") {
       throw new Error("WhatsApp belum terhubung");
     }
@@ -262,8 +331,13 @@ class WhatsAppService extends EventEmitter {
           if (remoteJid === "status@broadcast") continue;
           if (remoteJid.endsWith("@g.us")) continue;
 
-          const text = extractText(msg.message as ProtoMessage).trim();
-          if (!text) continue;
+          const msgId = msg.key.id ?? null;
+          // Cegah balasan dobel: abaikan pesan yang sudah pernah diproses.
+          if (msgId && this.processedIds.has(msgId)) {
+            log.debug({ msgId }, "pesan duplikat dilewati");
+            continue;
+          }
+          if (msgId) this.rememberProcessed(msgId);
 
           if (env.WA_READ_RECEIPTS) {
             try {
@@ -273,13 +347,40 @@ class WhatsAppService extends EventEmitter {
             }
           }
 
-          await this.handler?.({
-            waJid: remoteJid,
-            contactName: msg.pushName ?? null,
-            text,
-            messageId: msg.key.id ?? null,
-            timestamp: Number(msg.messageTimestamp ?? Date.now() / 1000),
-          });
+          // Identitas lead: bila balasan datang via LinkedID (`@lid`) tetapi ada
+          // nomor telepon (`senderPn`), pakai nomor itu agar menyatu dengan lead
+          // tempat kita meng-outreach. `lidJid` disimpan untuk merge data lama.
+          const pn =
+            typeof msg.key.senderPn === "string" && msg.key.senderPn.endsWith("@s.whatsapp.net")
+              ? msg.key.senderPn
+              : null;
+          const identityJid = pn ?? remoteJid;
+          const lidJid = identityJid !== remoteJid ? remoteJid : null;
+
+          // Antre per-kontak: proses berurutan agar tidak balapan / dobel.
+          // Teks ditentukan di dalam antrean (voice note/gambar diunduh & diubah).
+          const previous = this.threadChains.get(identityJid) ?? Promise.resolve();
+          const next = previous
+            .catch(() => {})
+            .then(async () => {
+              const text = await resolveIncomingText(sock, msg);
+              if (!text) return;
+              await this.handler?.({
+                waJid: identityJid,
+                lidJid,
+                contactName: msg.pushName ?? null,
+                text,
+                messageId: msgId,
+                timestamp: Number(msg.messageTimestamp ?? Date.now() / 1000),
+              });
+            })
+            .catch((err) => {
+              log.error({ err: (err as Error).message }, "failed to handle incoming message");
+            })
+            .finally(() => {
+              if (this.threadChains.get(identityJid) === next) this.threadChains.delete(identityJid);
+            });
+          this.threadChains.set(identityJid, next);
         } catch (err) {
           log.error({ err: (err as Error).message }, "failed to handle incoming message");
         }

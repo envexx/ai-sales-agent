@@ -1,0 +1,10 @@
+- generic [active] [ref=f213e1]:
+  - generic [ref=f213e2]:
+    - complementary [ref=f213e3]
+    - main [ref=f213e5]:
+      - generic [ref=f213e7]:
+        - heading "Proses bisnis" [level=1] [ref=f213e9]
+        - link "Lihat workflow ↗" [ref=f213e11] [cursor=pointer]:
+          - /url: /workflow
+      - generic "Memuat kanban" [ref=f213e13]
+  - button "Open Next.js Dev Tools" [ref=f213e19] [cursor=pointer]

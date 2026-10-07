@@ -1,0 +1,23 @@
+- generic [ref=f17e3]:
+  - banner [ref=f17e4]:
+    - generic [ref=f17e10]:
+      - strong [ref=f17e11]: Agent Company
+      - generic [ref=f17e12]: Living workspace · The Delegation
+    - generic [ref=f17e13]: Lokal · Belum terhubung
+    - generic [ref=f17e15]:
+      - button "14 agent" [ref=f17e16] [cursor=pointer]
+      - button "Layar penuh" [ref=f17e22] [cursor=pointer]
+  - main [ref=f17e28]:
+    - generic [ref=f17e29]: Menyiapkan ruang kerja dan kehidupan kantor…
+    - generic [ref=f17e30]:
+      - generic [ref=f17e31]:
+        - strong [ref=f17e32]: Kehidupan kantor
+        - generic [ref=f17e33]: 0 bekerja · 0 aktivitas lainnya
+      - generic [ref=f17e34]:
+        - button "Kantor hidup" [disabled] [pressed] [ref=f17e35] [cursor=pointer]
+        - button "Bekerja" [disabled] [ref=f17e36] [cursor=pointer]
+        - button "Waktu santai" [disabled] [ref=f17e37] [cursor=pointer]
+    - button "Seluruh workspace" [ref=f17e38] [cursor=pointer]
+    - generic: Space + drag / drag kanan untuk geser · Drag untuk putar · Scroll untuk zoom
+    - generic: Karakter © Arturo Paracuellos · CC BY-NC 4.0
+    - generic "Workspace 3D. Tahan Space dan drag untuk menggeser view." [ref=f17e42]
