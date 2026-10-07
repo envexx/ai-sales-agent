@@ -144,6 +144,16 @@ function execCommand(
         clearTimeout(timer);
         done(() => resolve({ code: code ?? -1, stdout, stderr }));
       });
+
+      // `exit` = proses utama benar-benar selesai. `close` bisa tertunda bila ada
+      // proses anak (mis. server privat `--standalone`) yang mewarisi stdio →
+      // resolve lebih dulu agar tidak menggantung sampai timeout.
+      child.on("exit", (code) => {
+        setTimeout(() => {
+          clearTimeout(timer);
+          done(() => resolve({ code: code ?? -1, stdout, stderr }));
+        }, 800);
+      });
     };
 
     // Kandidat: hasil resolusi .exe lebih dulu, lalu nama apa adanya (PATH).
