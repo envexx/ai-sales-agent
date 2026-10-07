@@ -282,6 +282,8 @@ const EnvSchema = z.object({
   // Agent OpenCode (mis. build). Kosong = default.
   DEVELOPER_OPENCODE_AGENT: z.string().default(""),
   DEVELOPER_OPENCODE_TIMEOUT_MS: int(600000),
+  // Jalankan `opencode run --standalone` (server privat) agar proses exit rapi.
+  DEVELOPER_OPENCODE_STANDALONE: bool(true),
   DEVELOPER_SWEEP_ENABLED: bool(true),
   DEVELOPER_SWEEP_HOUR: int(11),
   DEVELOPER_MAX_PLAN_ITEMS: int(12),

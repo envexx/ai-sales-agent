@@ -334,6 +334,7 @@ export async function runDeveloperBuild(params: {
     await enqueueJob({
       type: "developer.apply",
       payload: { targetId: target.id, planPath, mode: "build", internal: true },
+      maxAttempts: 1,
     });
     await notifyOwner({
       title: `Developer internal mulai bekerja: ${target.name}`,
@@ -472,7 +473,22 @@ async function runInternalApply(
   await gitBranchBackup(repoDir, backupBranch).catch(() => {});
 
   const planText = await readPlanText(target, payload.planPath);
-  const run = await opencodeRun({ prompt: internalApplyPrompt(target, planText), cwd: repoDir, auto: true });
+  let run;
+  try {
+    run = await opencodeRun({ prompt: internalApplyPrompt(target, planText), cwd: repoDir, auto: true });
+  } catch (err) {
+    await gitRevertAll(repoDir);
+    await emitEvent("developer.failed", {
+      entityType: "dev_target",
+      entityId: target.id,
+      payload: { reason: "opencode", error: (err as Error).message },
+    });
+    await notifyOwner({
+      title: "Developer internal gagal (OpenCode) — dibatalkan",
+      body: `${(err as Error).message}\nPerubahan dibatalkan (rollback ke kondisi awal).`,
+    });
+    return { targetId: target.id, branch: null, prUrl: null, deployApprovalId: null, outputPreview: `opencode gagal: ${(err as Error).message}` };
+  }
   await writeFile(
     resolve(workspace, "APPLY-RESULT.md"),
     [`# Hasil eksekusi Developer Internal — ${target.name}`, "", `Sesi OpenCode: ${run.sessionId ?? "-"}`, "", run.text || "(tanpa output)"].join("\n"),

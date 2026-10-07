@@ -28,6 +28,8 @@ export interface OpencodeRunArgs {
   agent?: string;
   /** Auto-approve permission OpenCode (perubahan file). Default true. */
   auto?: boolean;
+  /** Jalankan dengan server privat (`--standalone`) agar proses exit rapi. */
+  standalone?: boolean;
   timeoutMs?: number;
 }
 
@@ -203,6 +205,9 @@ export async function opencodeRun(args: OpencodeRunArgs): Promise<OpencodeRunRes
   const agent = args.agent ?? env.DEVELOPER_OPENCODE_AGENT;
   if (agent) cliArgs.push("--agent", agent);
   if (args.auto ?? true) cliArgs.push("--auto");
+  // Server privat: penting agar proses `opencode run` benar-benar keluar
+  // (tanpa ini, proses bisa menggantung menunggu background service).
+  if (args.standalone ?? env.DEVELOPER_OPENCODE_STANDALONE) cliArgs.push("--standalone");
 
   log.info(
     { cwd: args.cwd ?? process.cwd(), model: model || "(default)", agent: agent || "(default)" },
