@@ -549,13 +549,14 @@ async function runInternalApply(
   await gitCreateBranch(repoDir, branch);
   const diff = await gitDiffStat(repoDir).catch(() => "");
   const sha = await gitCommitAll(repoDir, `feat(developer-internal): ${target.name}`);
-  await gitPush(repoDir, branch).catch((err) => log.warn({ err: (err as Error).message }, "push branch internal gagal"));
+  await ghSetupGit();
+  await gitPush(repoDir, branch, 20_000).catch((err) => log.warn({ err: (err as Error).message }, "push branch internal gagal"));
 
   let merged = false;
   try {
     await gitCheckout(repoDir, baseBranch);
     await gitMerge(repoDir, branch, `merge(developer-internal): ${target.name}`);
-    await gitPush(repoDir, baseBranch).catch(() => {});
+    await gitPush(repoDir, baseBranch, 20_000).catch(() => {});
     merged = true;
   } catch (err) {
     await gitResetHard(repoDir, backupBranch).catch(() => {});

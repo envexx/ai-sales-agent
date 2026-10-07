@@ -19,12 +19,13 @@ function binary(bin: string): string {
   return bin;
 }
 
-async function git(args: string[], cwd?: string): Promise<string> {
+async function git(args: string[], cwd?: string, timeoutMs = GIT_TIMEOUT_MS): Promise<string> {
   const { stdout } = await execFileAsync(binary("git"), args, {
     cwd,
-    timeout: GIT_TIMEOUT_MS,
+    timeout: timeoutMs,
     windowsHide: true,
     maxBuffer: 32 * 1024 * 1024,
+    env: { ...process.env, GIT_TERMINAL_PROMPT: "0" },
   });
   return stdout.trim();
 }
@@ -131,8 +132,8 @@ export async function gitCommitAll(repoDir: string, message: string): Promise<st
   return git(["-C", repoDir, "rev-parse", "--short", "HEAD"]);
 }
 
-export async function gitPush(repoDir: string, branch: string): Promise<void> {
-  await git(["-C", repoDir, "push", "-u", "origin", branch]);
+export async function gitPush(repoDir: string, branch: string, timeoutMs?: number): Promise<void> {
+  await git(["-C", repoDir, "push", "-u", "origin", branch], undefined, timeoutMs);
 }
 
 /** Buat Pull Request; mengembalikan URL PR. */
