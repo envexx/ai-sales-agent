@@ -158,4 +158,11 @@ _(isi)_
 ---
 
 ## 4. Ide & catatan
-_(isi bebas)_ — mis. sub-agent Developer (Frontend/Backend/Ops), integrasi issue tracker, CI, dsb.
+
+Ide **sub-agent Developer** (di bawah koordinasi agent Developer/Adit, tunduk pada guardrail §1.8):
+
+1. **dev-backend** — Perbaikan/penambahan API, job queue, dan integrasi server (`src/pipeline/`, `src/integrations/`): handler, endpoint, skema data, serta optimasi performa. Wajib kecil, teruji (`tsc --noEmit`), dan dapat di-rollback.
+2. **dev-dashboard** — Perbaikan UI/dashboard internal (`dashboard/`): tampilan monitoring job & event, panel approval, serta bug tampilan. Menjaga konsistensi desain dan responsif.
+3. **dev-ops** — Operasional & keandalan: backup/rollback, health-check, konfigurasi PM2/deploy, dan otomasi pemeliharaan (sweep, kebersihan log). Tidak menyentuh file terlarang (`.env`, `src/supervisor/`, `src/monitor/`).
+
+Catatan: sub-agent hanya menerima brief dari agent Developer; ranah sensitif tetap butuh persetujuan owner, dan setiap perubahan didokumentasikan (`requirement.md`, `design.md`, `task.md`).
